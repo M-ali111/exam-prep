@@ -941,7 +941,6 @@ export async function generateNisBilQuestions(params: {
         : params.subject === 'english'
         ? `${GROQ_SYSTEM_PROMPT_ENGLISH} ${getLanguageInstruction(params.language)}`
         : `${GROQ_SYSTEM_PROMPT_MATH} ${getLanguageInstruction(params.language)}`;
-        : `${GROQ_SYSTEM_PROMPT_MATH} ${getLanguageInstruction(params.language)}`;
       
       // Try to get questions from Groq with retry logic
       const completion = await createGroqCompletionWithRetry(

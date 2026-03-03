@@ -47,7 +47,7 @@ const AppContent: React.FC = () => {
     setAppState('login');
   };
 
-  const handleSelectSubject = (selectedSubject: 'math' | 'logic') => {
+  const handleSelectSubject = (selectedSubject: 'math' | 'logic' | 'english') => {
     setSubject(selectedSubject);
     setAppState('mode-selection');
   };
@@ -65,8 +65,8 @@ const AppContent: React.FC = () => {
     const actualMode = mode === 'random' ? 'solo' : mode; // Convert random to solo for context
     setSelectedMode(actualMode);
     
-    // If Math subject, show grade selection
-    if (subject === 'math') {
+    // If Math or English subject, show grade selection
+    if (subject === 'math' || subject === 'english') {
       setAppState('grade-selection');
     } else if (subject === 'logic') {
       // If Logic, skip grade selection and go straight to the game
@@ -122,7 +122,7 @@ const AppContent: React.FC = () => {
           onBack={handleBackFromModeSelection}
         />
       )}
-      {appState === 'grade-selection' && subject === 'math' && (
+      {appState === 'grade-selection' && (subject === 'math' || subject === 'english') && (
         <GradeSelector 
           onSelect={handleGradeSelected}
           onBack={handleBackFromGradeSelection}

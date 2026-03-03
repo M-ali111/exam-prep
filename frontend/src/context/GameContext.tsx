@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useMemo, useState, useCallback, ReactNode } from 'react';
 
-export type Subject = 'math' | 'logic';
+export type Subject = 'math' | 'logic' | 'english';
 export type GameMode = 'solo' | 'multiplayer';
 export type Grade = 1 | 2 | 3;
 export type GameFlowStep = 'subject' | 'mode' | 'grade' | 'language' | 'playing';

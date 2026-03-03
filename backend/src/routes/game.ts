@@ -20,9 +20,9 @@ function parseLanguage(value: unknown): 'english' | 'russian' | 'kazakh' {
   throw new Error('Invalid language option.');
 }
 
-function parseSubject(value: unknown): 'math' | 'logic' {
+function parseSubject(value: unknown): 'math' | 'logic' | 'english' {
   if (!value) return 'math';
-  if (value === 'math' || value === 'logic') {
+  if (value === 'math' || value === 'logic' || value === 'english') {
     return value;
   }
   throw new Error('Invalid subject option.');

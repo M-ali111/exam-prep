@@ -22,6 +22,7 @@ export const SubjectSelection: React.FC<SubjectSelectionProps> = ({ onSubjectSel
   const subjectLabels = {
     math: t.mathematics,
     logic: t.logicIQ,
+    english: 'English Language',
   };
 
   return (
@@ -36,7 +37,7 @@ export const SubjectSelection: React.FC<SubjectSelectionProps> = ({ onSubjectSel
       <div className="flex-1 flex flex-col items-center justify-center px-4 py-8 max-w-md mx-auto w-full">
         {/* Subject Cards Grid */}
         <div className="grid grid-cols-1 gap-4 w-full mb-6">
-          {(['math', 'logic'] as const).map((subj) => (
+          {(['math', 'logic', 'english'] as const).map((subj) => (
             <button
               key={subj}
               onClick={() => handleSelectSubject(subj)}
@@ -44,21 +45,23 @@ export const SubjectSelection: React.FC<SubjectSelectionProps> = ({ onSubjectSel
                 subject === subj
                   ? subj === 'math'
                     ? 'bg-blue-50 border-blue-500 scale-105'
-                    : 'bg-purple-50 border-purple-500 scale-105'
+                    : subj === 'logic'
+                    ? 'bg-purple-50 border-purple-500 scale-105'
+                    : 'bg-amber-50 border-amber-500 scale-105'
                   : 'bg-white border-gray-200 hover:border-gray-300'
               }`}
             >
-              <div className="text-4xl">{subj === 'math' ? '🔢' : '🧠'}</div>
+              <div className="text-4xl">{subj === 'math' ? '🔢' : subj === 'logic' ? '🧠' : '📚'}</div>
               <div className="text-center">
                 <h3 className={`text-lg font-bold ${
                   subject === subj
-                    ? subj === 'math' ? 'text-blue-600' : 'text-purple-600'
+                    ? subj === 'math' ? 'text-blue-600' : subj === 'logic' ? 'text-purple-600' : 'text-amber-600'
                     : 'text-gray-900'
                 }`}>
                   {subjectLabels[subj]}
                 </h3>
                 <p className="text-sm text-gray-500 mt-1">
-                  {subj === 'math' ? 'Algebra, Geometry, Arithmetic' : 'Puzzles, Reasoning, IQ'}
+                  {subj === 'math' ? 'Algebra, Geometry, Arithmetic' : subj === 'logic' ? 'Puzzles, Reasoning, IQ' : 'Grammar, Reading, Vocabulary'}
                 </p>
               </div>
               {subject === subj && (
@@ -75,7 +78,9 @@ export const SubjectSelection: React.FC<SubjectSelectionProps> = ({ onSubjectSel
             className={`w-full rounded-2xl py-4 px-4 text-white font-bold text-lg transition-colors mb-3 ${
               subject === 'math'
                 ? 'bg-blue-500 hover:bg-blue-600'
-                : 'bg-purple-500 hover:bg-purple-600'
+                : subject === 'logic'
+                ? 'bg-purple-500 hover:bg-purple-600'
+                : 'bg-amber-500 hover:bg-amber-600'
             }`}
           >
             Continue with {subjectLabels[subject]}

@@ -78,11 +78,22 @@ const GROQ_SYSTEM_PROMPT_LOGIC =
   'No explanations, no markdown, no backticks, no extra text. ' +
   'Start your response with [ and end with ]';
 
+const GROQ_SYSTEM_PROMPT_ENGLISH =
+  'You are an expert at creating English language and literacy questions for Kazakhstan ' +
+  'NIS (Nazarbayev Intellectual Schools) and BIL school admission tests. ' +
+  'Generate diverse English questions that test: reading comprehension (passages with questions), ' +
+  'grammar (tense, articles, prepositions, subject-verb agreement), vocabulary (synonyms, antonyms, definitions), ' +
+  'spelling, sentence construction, and writing skills. ' +
+  'Questions should match the exact style, difficulty, and format of real NIS/BIL entrance exams. ' +
+  'CRITICAL: You MUST respond with ONLY a valid JSON array. ' +
+  'No explanations, no markdown, no backticks, no extra text. ' +
+  'Start your response with [ and end with ]';
+
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY || '' });
 
 export type NisBilDifficulty = 'easy' | 'medium' | 'hard';
 export type QuestionLanguage = 'english' | 'russian' | 'kazakh';
-export type QuestionSubject = 'math' | 'logic';
+export type QuestionSubject = 'math' | 'logic' | 'english';
 
 export interface NisBilQuestion {
   question: string;
@@ -752,10 +763,16 @@ function buildGroqUserPrompt(params: {
   subject: QuestionSubject;
 }) {
   const languageLabel = getLanguageLabel(params.language);
-  const subjectName = params.subject === 'logic' ? 'Logic & IQ' : 'Math';
-  const subjectDescription = params.subject === 'logic' 
-    ? 'logic and IQ questions testing pattern recognition, logical reasoning, analogies, and matrix reasoning'
-    : 'math questions';
+  let subjectName = 'Math';
+  let subjectDescription = 'math questions';
+  
+  if (params.subject === 'logic') {
+    subjectName = 'Logic & IQ';
+    subjectDescription = 'logic and IQ questions testing pattern recognition, logical reasoning, analogies, and matrix reasoning';
+  } else if (params.subject === 'english') {
+    subjectName = 'English Language';
+    subjectDescription = 'English language and literacy questions testing reading comprehension, grammar, vocabulary, spelling, and writing skills';
+  }
   
   return (
     `Generate ${params.count} ${subjectDescription} for a student applying to NIS/BIL ` +
@@ -921,6 +938,9 @@ export async function generateNisBilQuestions(params: {
       });
       const systemPrompt = params.subject === 'logic' 
         ? `${GROQ_SYSTEM_PROMPT_LOGIC} ${getLanguageInstruction(params.language)}`
+        : params.subject === 'english'
+        ? `${GROQ_SYSTEM_PROMPT_ENGLISH} ${getLanguageInstruction(params.language)}`
+        : `${GROQ_SYSTEM_PROMPT_MATH} ${getLanguageInstruction(params.language)}`;
         : `${GROQ_SYSTEM_PROMPT_MATH} ${getLanguageInstruction(params.language)}`;
       
       // Try to get questions from Groq with retry logic

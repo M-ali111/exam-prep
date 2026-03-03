@@ -95,6 +95,35 @@ async function main() {
         options: JSON.stringify(q.options),
         correctAnswer: q.correctAnswer,
         language: 'english',
+        subject: 'math',
+      } as any,
+    });
+  }
+
+  // Add some logic questions
+  const logicQuestions = [
+    { text: "What comes next: 2, 4, 6, 8, ?", difficulty: 2, options: ["9", "10", "11", "12"], correctAnswer: 1, subject: "logic" },
+    { text: "If A > B and B > C, then: A > C (True/False)", difficulty: 3, options: ["True", "False", "Cannot determine", "Unknown"], correctAnswer: 0, subject: "logic" },
+    { text: "Complete the analogy: Apple is to Fruit as Carrot is to ?", difficulty: 3, options: ["Orange", "Vegetable", "Plant", "Food"], correctAnswer: 1, subject: "logic" },
+    { text: "What number should replace the ?: 1, 1, 2, 3, 5, 8, ?", difficulty: 4, options: ["11", "12", "13", "14"], correctAnswer: 2, subject: "logic" },
+    { text: "Which one doesn't belong: Cat, Dog, Whale, Sparrow", difficulty: 3, options: ["Cat", "Dog", "Whale", "Sparrow"], correctAnswer: 2, subject: "logic" },
+    { text: "If all roses are flowers and flowers are plants, then roses are plants (True/False)", difficulty: 3, options: ["True", "False", "Cannot determine", "Unknown"], correctAnswer: 0, subject: "logic" },
+    { text: "Pattern: 3, 6, 12, 24, ?", difficulty: 3, options: ["36", "48", "60", "72"], correctAnswer: 1, subject: "logic" },
+    { text: "What comes next: A, B, D, G, K, ?", difficulty: 4, options: ["M", "N", "O", "P"], correctAnswer: 3, subject: "logic" },
+    { text: "If a bottle contains 2 liters and you drink 0.5 liters per day, how many days until it is empty?", difficulty: 2, options: ["2", "3", "4", "5"], correctAnswer: 2, subject: "logic" },
+    { text: "Complete: Monday, Tuesday, Wednesday, ?", difficulty: 1, options: ["Friday", "Thursday", "Saturday", "Sunday"], correctAnswer: 1, subject: "logic" },
+  ];
+
+  for (const q of logicQuestions) {
+    await prisma.question.create({
+      data: {
+        text: q.text,
+        difficulty: q.difficulty,
+        options: JSON.stringify(q.options),
+        correctAnswer: q.correctAnswer,
+        language: 'english',
+        subject: q.subject,
+        explanation: 'See the pattern in the sequence.',
       } as any,
     });
   }

@@ -905,68 +905,75 @@ export async function generateNisBilQuestions(params: {
   subject: QuestionSubject;
   difficultyValue?: number; // Numeric difficulty for fallback purposes
 }) {
-  ensureGroqConfigured();
-
-  const userPrompt = buildGroqUserPrompt({
-    count: params.count,
-    gradeLabel: params.gradeLabel,
-    difficulty: params.difficulty,
-    topic: params.topic,
-    language: params.language,
-    subject: params.subject,
-  });
-  const systemPrompt = params.subject === 'logic' 
-    ? `${GROQ_SYSTEM_PROMPT_LOGIC} ${getLanguageInstruction(params.language)}`
-    : `${GROQ_SYSTEM_PROMPT_MATH} ${getLanguageInstruction(params.language)}`;
+  const hasGroqKey = !!process.env.GROQ_API_KEY;
   
-  try {
-    // Try to get questions from Groq with retry logic
-    const completion = await createGroqCompletionWithRetry(
-      [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: userPrompt },
-      ],
-      true
-    );
+  if (hasGroqKey) {
+    try {
+      ensureGroqConfigured();
 
-    const content = completion?.choices?.[0]?.message?.content;
-    if (!content || typeof content !== 'string') {
-      throw new Error('Groq returned an empty response');
-    }
-
-    return parseGroqQuestions(content);
-  } catch (error: any) {
-    // Log the error for backend debugging
-    console.error('Groq question generation failed, falling back to database:', {
-      error: error.message,
-      params: {
+      const userPrompt = buildGroqUserPrompt({
+        count: params.count,
         gradeLabel: params.gradeLabel,
         difficulty: params.difficulty,
         topic: params.topic,
         language: params.language,
         subject: params.subject,
-      },
-      timestamp: new Date().toISOString(),
-    });
-
-    // Fallback to database questions silently
-    try {
-      const difficultyValue = params.difficultyValue || (params.difficulty === 'hard' ? 9 : params.difficulty === 'medium' ? 6 : 3);
-      const fallbackQuestions = await getFallbackQuestionsFromDatabase(
-        difficultyValue,
-        params.count,
-        params.subject
+      });
+      const systemPrompt = params.subject === 'logic' 
+        ? `${GROQ_SYSTEM_PROMPT_LOGIC} ${getLanguageInstruction(params.language)}`
+        : `${GROQ_SYSTEM_PROMPT_MATH} ${getLanguageInstruction(params.language)}`;
+      
+      // Try to get questions from Groq with retry logic
+      const completion = await createGroqCompletionWithRetry(
+        [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userPrompt },
+        ],
+        true
       );
-      
-      if (fallbackQuestions.length > 0) {
-        console.log(`Fallback successful: retrieved ${fallbackQuestions.length} questions from database`);
-        return fallbackQuestions;
+
+      const content = completion?.choices?.[0]?.message?.content;
+      if (!content || typeof content !== 'string') {
+        throw new Error('Groq returned an empty response');
       }
-      
-      throw new Error('No fallback questions available');
-    } catch (fallbackError: any) {
-      console.error('Fallback to database also failed:', fallbackError.message);
-      throw new Error('Unable to generate or retrieve questions. Please try again later.');
+
+      return parseGroqQuestions(content);
+    } catch (error: any) {
+      // Log the error for backend debugging
+      console.error('Groq question generation failed, falling back to database:', {
+        error: error.message,
+        params: {
+          gradeLabel: params.gradeLabel,
+          difficulty: params.difficulty,
+          topic: params.topic,
+          language: params.language,
+          subject: params.subject,
+        },
+        timestamp: new Date().toISOString(),
+      });
     }
+  } else {
+    console.log('[generateNisBilQuestions] GROQ_API_KEY not configured, using database fallback immediately');
+  }
+
+  // Fallback to database questions
+  try {
+    const difficultyValue = params.difficultyValue || (params.difficulty === 'hard' ? 9 : params.difficulty === 'medium' ? 6 : 3);
+    const fallbackQuestions = await getFallbackQuestionsFromDatabase(
+      difficultyValue,
+      params.count,
+      params.subject
+    );
+    
+    if (fallbackQuestions.length > 0) {
+      console.log(`[generateNisBilQuestions] Fallback successful: retrieved ${fallbackQuestions.length} questions from database for subject: ${params.subject}`);
+      return fallbackQuestions;
+    }
+    
+    console.error('[generateNisBilQuestions] Database fallback returned 0 questions for subject:', params.subject);
+    throw new Error('No fallback questions available in database');
+  } catch (fallbackError: any) {
+    console.error('[generateNisBilQuestions] Fallback to database also failed:', fallbackError.message);
+    throw new Error(`Unable to generate or retrieve questions. Database error: ${fallbackError.message}`);
   }
 }

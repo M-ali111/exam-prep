@@ -6,8 +6,20 @@ export const useGameSocket = () => {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [connected, setConnected] = useState(false);
   
-  // Call hook unconditionally at top level
-  const { token } = useAuth();
+  // Safely call useAuth with error protection
+  let token: string | null = null;
+  
+  try {
+    const auth = useAuth();
+    token = auth.token;
+  } catch (error) {
+    // useAuth failed (not inside provider)
+    // Fall back to localStorage
+    token = localStorage.getItem('token');
+    if (!token) {
+      console.warn('[useGameSocket] Called outside AuthProvider, using localStorage token');
+    }
+  }
 
   useEffect(() => {
     if (!token) {

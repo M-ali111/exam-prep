@@ -30,6 +30,8 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [selectedGrade, setSelectedGrade] = useState<Grade | null>(null);
   const [currentStep, setCurrentStep] = useState<GameFlowStep>('subject');
 
+  console.log('[GameProvider] Mounted - subject:', subject);
+
   const setSubject = useCallback((next: Subject) => {
     setSubjectState(next);
     localStorage.setItem(SUBJECT_STORAGE_KEY, next);
@@ -53,7 +55,7 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       setCurrentStep,
       resetGameFlow,
     }),
-    [subject, setSubject, selectedMode, selectedGrade, currentStep, resetGameFlow]
+    [subject, setSubject, selectedMode, setSelectedMode, selectedGrade, setSelectedGrade, currentStep, setCurrentStep, resetGameFlow]
   );
 
   return <GameContext.Provider value={value}>{children}</GameContext.Provider>;

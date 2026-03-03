@@ -24,6 +24,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
 
+  console.log('[AuthProvider] Mounted - token initialized:', !!token);
+
   const clearAuth = () => {
     setUser(null);
     setToken(null);

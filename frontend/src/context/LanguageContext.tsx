@@ -13,6 +13,8 @@ const STORAGE_KEY = 'language';
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [language, setLanguageState] = useState<LanguageCode>('english');
 
+  console.log('[LanguageProvider] Mounted - language:', language);
+
   useEffect(() => {
     const stored = localStorage.getItem(STORAGE_KEY) as LanguageCode | null;
     if (stored === 'english' || stored === 'russian' || stored === 'kazakh') {

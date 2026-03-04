@@ -464,7 +464,7 @@ export const MultiplayerGame: React.FC<MultiplayerGameProps> = ({ onBack }) => {
     return (
       <>
         <TopicSelection
-          onSelect={(topic) => {
+          onTopicSelected={(topic) => {
             setSelectedTopic(topic);
             if (pendingAction === 'create') {
               createGame(topic);

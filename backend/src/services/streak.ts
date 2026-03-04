@@ -30,6 +30,10 @@ function getDateNDaysAgo(days: number): string {
   return date.toISOString().split('T')[0];
 }
 
+function dateStringToUtcDate(dateStr: string): Date {
+  return new Date(`${dateStr}T00:00:00.000Z`);
+}
+
 /**
  * Record a game for a user on a specific day
  */
@@ -131,12 +135,14 @@ export async function updateStreakStatus(userId: string): Promise<void> {
     // Update user's streak
     const newLongestStreak = Math.max((user as any).longestStreak || 0, currentStreak);
 
+    const streakDateString = hasGameToday ? today : yesterday;
+
     await prisma.user.update({
       where: { id: userId },
       data: {
         currentStreak,
         longestStreak: newLongestStreak,
-        lastStreakDate: hasGameToday ? today : yesterday,
+        lastStreakDate: dateStringToUtcDate(streakDateString),
       },
     });
   } catch (error) {

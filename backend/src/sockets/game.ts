@@ -292,6 +292,7 @@ export const setupSocket = (io: Server) => {
             text: gq.question.text,
             options: JSON.parse(gq.question.options),
             difficulty: gq.question.difficulty,
+            subject: gq.question.subject,
             explanation: (gq.question as { explanation?: string | null }).explanation ?? null,
           }));
 

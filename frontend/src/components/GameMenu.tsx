@@ -194,190 +194,95 @@ export const GameMenu: React.FC<GameMenuProps> = ({ onSelectSubject, onSelectNav
           </button>
         )}
 
-        <div className="w-full flex flex-col gap-4">
+        <div className="w-full grid grid-cols-2 gap-3">
           <button
             onClick={() => onSelectSubject('math')}
-            className="w-full bg-gradient-to-br from-teal-500 to-teal-600 text-white rounded-2xl py-8 px-5 text-left shadow-md min-h-[148px] hover:shadow-lg hover:scale-105 transition-all duration-200"
+            className="bg-gradient-to-br from-teal-500 to-teal-600 text-white rounded-2xl py-5 px-4 text-left shadow-md hover:shadow-lg hover:scale-105 transition-all duration-200"
           >
-            <div className="flex items-start justify-between">
-              <div>
-                <div className="text-4xl mb-2">🔢</div>
-                <h2 className="text-2xl font-bold">Mathematics</h2>
-                <p className="text-sm font-medium text-teal-100 mt-2">Algebra, Fractions & More</p>
-              </div>
-              <span className="text-3xl">→</span>
-            </div>
-            <div className="mt-3 grid grid-cols-6 gap-1 opacity-20">
-              {Array.from({ length: 12 }).map((_, idx) => (
-                <span key={idx} className="h-1 bg-white rounded" />
-              ))}
-            </div>
+            <div className="text-3xl mb-2">🔢</div>
+            <h2 className="text-base font-bold leading-tight">Mathematics</h2>
+            <p className="text-xs font-medium text-teal-100 mt-1.5">Algebra & More</p>
           </button>
 
           <button
             onClick={() => onSelectSubject('logic')}
-            className="w-full bg-gradient-to-br from-purple-500 to-purple-600 text-white rounded-2xl py-8 px-5 text-left shadow-md min-h-[148px] hover:shadow-lg hover:scale-105 transition-all duration-200"
+            className="bg-gradient-to-br from-purple-500 to-purple-600 text-white rounded-2xl py-5 px-4 text-left shadow-md hover:shadow-lg hover:scale-105 transition-all duration-200"
           >
-            <div className="flex items-start justify-between">
-              <div>
-                <div className="text-4xl mb-2">🧠</div>
-                <h2 className="text-2xl font-bold">Logic & IQ</h2>
-                <p className="text-sm font-medium text-purple-100 mt-2">Patterns, Reasoning & Puzzles</p>
-              </div>
-              <span className="text-3xl">→</span>
-            </div>
-            <div className="mt-3 flex gap-1 opacity-25">
-              {Array.from({ length: 10 }).map((_, idx) => (
-                <span key={idx} className="w-2 h-2 rounded-full bg-white" />
-              ))}
-            </div>
+            <div className="text-3xl mb-2">🧠</div>
+            <h2 className="text-base font-bold leading-tight">Logic & IQ</h2>
+            <p className="text-xs font-medium text-purple-100 mt-1.5">Patterns & Puzzles</p>
           </button>
 
           <button
             onClick={() => onSelectSubject('english')}
-            className="w-full bg-gradient-to-br from-amber-500 to-amber-600 text-white rounded-2xl py-8 px-5 text-left shadow-md min-h-[148px] hover:shadow-lg hover:scale-105 transition-all duration-200"
+            className="bg-gradient-to-br from-amber-500 to-amber-600 text-white rounded-2xl py-5 px-4 text-left shadow-md hover:shadow-lg hover:scale-105 transition-all duration-200"
           >
-            <div className="flex items-start justify-between">
-              <div>
-                <div className="text-4xl mb-2">📚</div>
-                <h2 className="text-2xl font-bold">English</h2>
-                <p className="text-sm font-medium text-amber-100 mt-2">Grammar, Reading & Vocabulary</p>
-              </div>
-              <span className="text-3xl">→</span>
-            </div>
-            <div className="mt-3 grid grid-cols-6 gap-1 opacity-20">
-              {Array.from({ length: 12 }).map((_, idx) => (
-                <span key={idx} className="h-1 bg-white rounded" />
-              ))}
-            </div>
+            <div className="text-3xl mb-2">📚</div>
+            <h2 className="text-base font-bold leading-tight">English</h2>
+            <p className="text-xs font-medium text-amber-100 mt-1.5">Grammar & Reading</p>
           </button>
 
           <button
             onClick={() => onSelectSubject('physics')}
-            className="w-full bg-gradient-to-br from-indigo-500 to-indigo-600 text-white rounded-2xl py-8 px-5 text-left shadow-md min-h-[148px] hover:shadow-lg hover:scale-105 transition-all duration-200"
+            className="bg-gradient-to-br from-indigo-500 to-indigo-600 text-white rounded-2xl py-5 px-4 text-left shadow-md hover:shadow-lg hover:scale-105 transition-all duration-200"
           >
-            <div className="flex items-start justify-between">
-              <div>
-                <div className="text-4xl mb-2">⚛️</div>
-                <h2 className="text-2xl font-bold">Physics</h2>
-                <p className="text-sm font-medium text-indigo-100 mt-2">Mechanics, Energy, Forces</p>
-              </div>
-              <span className="text-3xl">→</span>
-            </div>
-            <div className="mt-3 grid grid-cols-6 gap-1 opacity-20">
-              {Array.from({ length: 12 }).map((_, idx) => (
-                <span key={idx} className="h-1 bg-white rounded" />
-              ))}
-            </div>
+            <div className="text-3xl mb-2">⚛️</div>
+            <h2 className="text-base font-bold leading-tight">Physics</h2>
+            <p className="text-xs font-medium text-indigo-100 mt-1.5">Mechanics & Energy</p>
           </button>
 
           <button
             onClick={() => onSelectSubject('chemistry')}
-            className="w-full bg-gradient-to-br from-green-500 to-green-600 text-white rounded-2xl py-8 px-5 text-left shadow-md min-h-[148px] hover:shadow-lg hover:scale-105 transition-all duration-200"
+            className="bg-gradient-to-br from-green-500 to-green-600 text-white rounded-2xl py-5 px-4 text-left shadow-md hover:shadow-lg hover:scale-105 transition-all duration-200"
           >
-            <div className="flex items-start justify-between">
-              <div>
-                <div className="text-4xl mb-2">🧪</div>
-                <h2 className="text-2xl font-bold">Chemistry</h2>
-                <p className="text-sm font-medium text-green-100 mt-2">Elements, Reactions, Compounds</p>
-              </div>
-              <span className="text-3xl">→</span>
-            </div>
-            <div className="mt-3 grid grid-cols-6 gap-1 opacity-20">
-              {Array.from({ length: 12 }).map((_, idx) => (
-                <span key={idx} className="h-1 bg-white rounded" />
-              ))}
-            </div>
+            <div className="text-3xl mb-2">🧪</div>
+            <h2 className="text-base font-bold leading-tight">Chemistry</h2>
+            <p className="text-xs font-medium text-green-100 mt-1.5">Elements & Reactions</p>
           </button>
 
           <button
             onClick={() => onSelectSubject('biology')}
-            className="w-full bg-gradient-to-br from-teal-400 to-teal-500 text-white rounded-2xl py-8 px-5 text-left shadow-md min-h-[148px] hover:shadow-lg hover:scale-105 transition-all duration-200"
+            className="bg-gradient-to-br from-teal-400 to-teal-500 text-white rounded-2xl py-5 px-4 text-left shadow-md hover:shadow-lg hover:scale-105 transition-all duration-200"
           >
-            <div className="flex items-start justify-between">
-              <div>
-                <div className="text-4xl mb-2">🧬</div>
-                <h2 className="text-2xl font-bold">Biology</h2>
-                <p className="text-sm font-medium text-teal-100 mt-2">Life Science, Cells, Organisms</p>
-              </div>
-              <span className="text-3xl">→</span>
-            </div>
-            <div className="mt-3 grid grid-cols-6 gap-1 opacity-20">
-              {Array.from({ length: 12 }).map((_, idx) => (
-                <span key={idx} className="h-1 bg-white rounded" />
-              ))}
-            </div>
+            <div className="text-3xl mb-2">🧬</div>
+            <h2 className="text-base font-bold leading-tight">Biology</h2>
+            <p className="text-xs font-medium text-teal-100 mt-1.5">Life Science & Cells</p>
           </button>
 
           <button
             onClick={() => onSelectSubject('geography')}
-            className="w-full bg-gradient-to-br from-cyan-500 to-cyan-600 text-white rounded-2xl py-8 px-5 text-left shadow-md min-h-[148px] hover:shadow-lg hover:scale-105 transition-all duration-200"
+            className="bg-gradient-to-br from-cyan-500 to-cyan-600 text-white rounded-2xl py-5 px-4 text-left shadow-md hover:shadow-lg hover:scale-105 transition-all duration-200"
           >
-            <div className="flex items-start justify-between">
-              <div>
-                <div className="text-4xl mb-2">🌍</div>
-                <h2 className="text-2xl font-bold">Geography</h2>
-                <p className="text-sm font-medium text-cyan-100 mt-2">Earth, Maps, Regions</p>
-              </div>
-              <span className="text-3xl">→</span>
-            </div>
-            <div className="mt-3 grid grid-cols-6 gap-1 opacity-20">
-              {Array.from({ length: 12 }).map((_, idx) => (
-                <span key={idx} className="h-1 bg-white rounded" />
-              ))}
-            </div>
+            <div className="text-3xl mb-2">🌍</div>
+            <h2 className="text-base font-bold leading-tight">Geography</h2>
+            <p className="text-xs font-medium text-cyan-100 mt-1.5">Earth & Maps</p>
           </button>
 
           <button
             onClick={() => onSelectSubject('history')}
-            className="w-full bg-gradient-to-br from-rose-500 to-rose-600 text-white rounded-2xl py-8 px-5 text-left shadow-md min-h-[148px] hover:shadow-lg hover:scale-105 transition-all duration-200"
+            className="bg-gradient-to-br from-rose-500 to-rose-600 text-white rounded-2xl py-5 px-4 text-left shadow-md hover:shadow-lg hover:scale-105 transition-all duration-200"
           >
-            <div className="flex items-start justify-between">
-              <div>
-                <div className="text-4xl mb-2">📜</div>
-                <h2 className="text-2xl font-bold">History</h2>
-                <p className="text-sm font-medium text-rose-100 mt-2">World & Kazakhstan History</p>
-              </div>
-              <span className="text-3xl">→</span>
-            </div>
-            <div className="mt-3 grid grid-cols-6 gap-1 opacity-20">
-              {Array.from({ length: 12 }).map((_, idx) => (
-                <span key={idx} className="h-1 bg-white rounded" />
-              ))}
-            </div>
+            <div className="text-3xl mb-2">📜</div>
+            <h2 className="text-base font-bold leading-tight">History</h2>
+            <p className="text-xs font-medium text-rose-100 mt-1.5">World & Kazakhstan</p>
           </button>
 
           <button
             onClick={() => onSelectSubject('informatics')}
-            className="w-full bg-gradient-to-br from-slate-500 to-slate-600 text-white rounded-2xl py-8 px-5 text-left shadow-md min-h-[148px] hover:shadow-lg hover:scale-105 transition-all duration-200"
+            className="bg-gradient-to-br from-slate-500 to-slate-600 text-white rounded-2xl py-5 px-4 text-left shadow-md hover:shadow-lg hover:scale-105 transition-all duration-200"
           >
-            <div className="flex items-start justify-between">
-              <div>
-                <div className="text-4xl mb-2">💻</div>
-                <h2 className="text-2xl font-bold">Informatics</h2>
-                <p className="text-sm font-medium text-slate-100 mt-2">Algorithms, Coding, Logic</p>
-              </div>
-              <span className="text-3xl">→</span>
-            </div>
-            <div className="mt-3 grid grid-cols-6 gap-1 opacity-20">
-              {Array.from({ length: 12 }).map((_, idx) => (
-                <span key={idx} className="h-1 bg-white rounded" />
-              ))}
-            </div>
+            <div className="text-3xl mb-2">💻</div>
+            <h2 className="text-base font-bold leading-tight">Informatics</h2>
+            <p className="text-xs font-medium text-slate-100 mt-1.5">Algorithms & Coding</p>
           </button>
 
           <button
             onClick={() => onSelectNav('stats')}
-            className="w-full bg-gradient-to-br from-blue-500 to-indigo-600 text-white rounded-2xl py-8 px-5 text-left shadow-md min-h-[148px] hover:shadow-lg hover:scale-105 transition-all duration-200"
+            className="col-span-2 bg-gradient-to-br from-blue-500 to-indigo-600 text-white rounded-2xl py-5 px-4 text-left shadow-md hover:shadow-lg hover:scale-105 transition-all duration-200"
           >
-            <div className="flex items-start justify-between">
-              <div>
-                <div className="text-4xl mb-2">📊</div>
-                <h2 className="text-2xl font-bold">Stats & Leaderboard</h2>
-                <p className="text-sm font-medium text-indigo-100 mt-2">View your progress</p>
-              </div>
-              <span className="text-3xl">→</span>
-            </div>
+            <div className="text-3xl mb-2">📊</div>
+            <h2 className="text-base font-bold leading-tight">Stats & Leaderboard</h2>
+            <p className="text-xs font-medium text-indigo-100 mt-1.5">View your progress</p>
           </button>
         </div>
       </div>

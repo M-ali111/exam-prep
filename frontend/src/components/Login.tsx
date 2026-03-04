@@ -16,7 +16,7 @@ export const Login: React.FC<{ onLoginSuccess: () => void }> = ({ onLoginSuccess
     try {
       if (isSignup) {
         await signup(email, username, password);
-        localStorage.setItem('zirekIqJustSignedUp', 'true');
+        localStorage.setItem('zerekIqJustSignedUp', 'true');
       } else {
         await login(email, password);
       }
@@ -31,7 +31,7 @@ export const Login: React.FC<{ onLoginSuccess: () => void }> = ({ onLoginSuccess
       <div className="bg-white rounded-2xl shadow-lg p-6 sm:p-8 w-full max-w-md mx-auto">
         <div className="text-center mb-8">
           <div className="text-5xl sm:text-6xl mb-3">🧠</div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">ZirekIQ</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">ZerekIQ</h1>
           <p className="text-gray-500 text-base sm:text-sm mt-2">Master Mathematics & Logic</p>
         </div>
 

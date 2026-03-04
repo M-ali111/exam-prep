@@ -32,7 +32,7 @@ const AppContent: React.FC = () => {
     if (token && user) {
       setAppState('menu');
 
-      const justSignedUp = localStorage.getItem('zirekIqJustSignedUp') === 'true';
+      const justSignedUp = localStorage.getItem('zerekIqJustSignedUp') === 'true';
       const hasSeenOnboarding = localStorage.getItem('hasSeenOnboarding') === 'true';
       setShowOnboarding(justSignedUp && !hasSeenOnboarding);
     } else {

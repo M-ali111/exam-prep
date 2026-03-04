@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useMemo, useState, useCallback, ReactNode } from 'react';
 
-export type Subject = 'math' | 'logic' | 'english';
+export type Subject = 'math' | 'logic' | 'english' | 'physics' | 'chemistry' | 'biology' | 'geography' | 'history' | 'informatics';
 export type GameMode = 'solo' | 'multiplayer';
 export type Grade = 0 | 1 | 2 | 3;
 export type GameFlowStep = 'subject' | 'mode' | 'grade' | 'language' | 'playing';
@@ -24,7 +24,8 @@ const SUBJECT_STORAGE_KEY = 'selectedSubject';
 export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [subject, setSubjectState] = useState<Subject | null>(() => {
     const stored = localStorage.getItem(SUBJECT_STORAGE_KEY) as Subject | null;
-    return stored === 'math' || stored === 'logic' ? stored : null;
+    const validSubjects = ['math', 'logic', 'english', 'physics', 'chemistry', 'biology', 'geography', 'history', 'informatics'];
+    return stored && validSubjects.includes(stored) ? stored : null;
   });
   const [selectedMode, setSelectedMode] = useState<GameMode | null>(null);
   const [selectedGrade, setSelectedGrade] = useState<Grade | null>(null);

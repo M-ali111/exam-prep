@@ -89,11 +89,73 @@ const GROQ_SYSTEM_PROMPT_ENGLISH =
   'No explanations, no markdown, no backticks, no extra text. ' +
   'Start your response with [ and end with ]';
 
+const GROQ_SYSTEM_PROMPT_PHYSICS =
+  'You are an expert at creating Physics questions for Kazakhstan ' +
+  'NIS (Nazarbayev Intellectual Schools) and BIL school admission tests. ' +
+  'Generate questions covering: mechanics (motion, forces, energy), thermodynamics, electricity, ' +
+  'magnetism, optics, waves, and basic modern physics. ' +
+  'Questions should match the exact style, difficulty, and format of real NIS/BIL entrance exams. ' +
+  'CRITICAL: You MUST respond with ONLY a valid JSON array. ' +
+  'No explanations, no markdown, no backticks, no extra text. ' +
+  'Start your response with [ and end with ]';
+
+const GROQ_SYSTEM_PROMPT_CHEMISTRY =
+  'You are an expert at creating Chemistry questions for Kazakhstan ' +
+  'NIS (Nazarbayev Intellectual Schools) and BIL school admission tests. ' +
+  'Generate questions covering: atomic structure, periodic table, chemical bonding, reactions, ' +
+  'stoichiometry, acids and bases, organic chemistry basics, and chemical equations. ' +
+  'Questions should match the exact style, difficulty, and format of real NIS/BIL entrance exams. ' +
+  'CRITICAL: You MUST respond with ONLY a valid JSON array. ' +
+  'No explanations, no markdown, no backticks, no extra text. ' +
+  'Start your response with [ and end with ]';
+
+const GROQ_SYSTEM_PROMPT_BIOLOGY =
+  'You are an expert at creating Biology questions for Kazakhstan ' +
+  'NIS (Nazarbayev Intellectual Schools) and BIL school admission tests. ' +
+  'Generate questions covering: cell biology, genetics, evolution, ecology, human anatomy and physiology, ' +
+  'plants, animals, and microbiology. ' +
+  'Questions should match the exact style, difficulty, and format of real NIS/BIL entrance exams. ' +
+  'CRITICAL: You MUST respond with ONLY a valid JSON array. ' +
+  'No explanations, no markdown, no backticks, no extra text. ' +
+  'Start your response with [ and end with ]';
+
+const GROQ_SYSTEM_PROMPT_GEOGRAPHY =
+  'You are an expert at creating Geography questions for Kazakhstan ' +
+  'NIS (Nazarbayev Intellectual Schools) and BIL school admission tests. ' +
+  'Generate questions covering: physical geography (climate, landforms, water bodies), ' +
+  'political geography (countries, capitals, borders), economic geography, population, ' +
+  'natural resources, and especially Kazakhstan geography. ' +
+  'Questions should match the exact style, difficulty, and format of real NIS/BIL entrance exams. ' +
+  'CRITICAL: You MUST respond with ONLY a valid JSON array. ' +
+  'No explanations, no markdown, no backticks, no extra text. ' +
+  'Start your response with [ and end with ]';
+
+const GROQ_SYSTEM_PROMPT_HISTORY =
+  'You are an expert at creating History questions for Kazakhstan ' +
+  'NIS (Nazarbayev Intellectual Schools) and BIL school admission tests. ' +
+  'Generate questions covering: world history (major civilizations, events, figures), ' +
+  'Kazakhstan history (from ancient times to modern day), important dates, cultural developments, ' +
+  'and historical analysis. ' +
+  'Questions should match the exact style, difficulty, and format of real NIS/BIL entrance exams. ' +
+  'CRITICAL: You MUST respond with ONLY a valid JSON array. ' +
+  'No explanations, no markdown, no backticks, no extra text. ' +
+  'Start your response with [ and end with ]';
+
+const GROQ_SYSTEM_PROMPT_INFORMATICS =
+  'You are an expert at creating Informatics/Computer Science questions for Kazakhstan ' +
+  'NIS (Nazarbayev Intellectual Schools) and BIL school admission tests. ' +
+  'Generate questions covering: algorithms, programming logic, data structures, binary systems, ' +
+  'computational thinking, basic coding concepts, and problem-solving. ' +
+  'Questions should match the exact style, difficulty, and format of real NIS/BIL entrance exams. ' +
+  'CRITICAL: You MUST respond with ONLY a valid JSON array. ' +
+  'No explanations, no markdown, no backticks, no extra text. ' +
+  'Start your response with [ and end with ]';
+
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY || '' });
 
 export type NisBilDifficulty = 'easy' | 'medium' | 'hard';
 export type QuestionLanguage = 'english' | 'russian' | 'kazakh';
-export type QuestionSubject = 'math' | 'logic' | 'english';
+export type QuestionSubject = 'math' | 'logic' | 'english' | 'physics' | 'chemistry' | 'biology' | 'geography' | 'history' | 'informatics';
 
 export interface NisBilQuestion {
   question: string;
@@ -936,11 +998,37 @@ export async function generateNisBilQuestions(params: {
         language: params.language,
         subject: params.subject,
       });
-      const systemPrompt = params.subject === 'logic' 
-        ? `${GROQ_SYSTEM_PROMPT_LOGIC} ${getLanguageInstruction(params.language)}`
-        : params.subject === 'english'
-        ? `${GROQ_SYSTEM_PROMPT_ENGLISH} ${getLanguageInstruction(params.language)}`
-        : `${GROQ_SYSTEM_PROMPT_MATH} ${getLanguageInstruction(params.language)}`;
+      
+      let systemPrompt: string;
+      switch (params.subject) {
+        case 'logic':
+          systemPrompt = GROQ_SYSTEM_PROMPT_LOGIC;
+          break;
+        case 'english':
+          systemPrompt = GROQ_SYSTEM_PROMPT_ENGLISH;
+          break;
+        case 'physics':
+          systemPrompt = GROQ_SYSTEM_PROMPT_PHYSICS;
+          break;
+        case 'chemistry':
+          systemPrompt = GROQ_SYSTEM_PROMPT_CHEMISTRY;
+          break;
+        case 'biology':
+          systemPrompt = GROQ_SYSTEM_PROMPT_BIOLOGY;
+          break;
+        case 'geography':
+          systemPrompt = GROQ_SYSTEM_PROMPT_GEOGRAPHY;
+          break;
+        case 'history':
+          systemPrompt = GROQ_SYSTEM_PROMPT_HISTORY;
+          break;
+        case 'informatics':
+          systemPrompt = GROQ_SYSTEM_PROMPT_INFORMATICS;
+          break;
+        default:
+          systemPrompt = GROQ_SYSTEM_PROMPT_MATH;
+      }
+      systemPrompt = `${systemPrompt} ${getLanguageInstruction(params.language)}`;
       
       // Try to get questions from Groq with retry logic
       const completion = await createGroqCompletionWithRetry(

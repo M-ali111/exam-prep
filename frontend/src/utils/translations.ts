@@ -16,6 +16,12 @@ type TranslationSet = {
   logicIQ: string;
   grade: string;
   language: string;
+  physics: string;
+  chemistry: string;
+  biology: string;
+  geography: string;
+  history: string;
+  informatics: string;
 };
 
 export const translations: Record<LanguageCode, TranslationSet> = {
@@ -35,6 +41,12 @@ export const translations: Record<LanguageCode, TranslationSet> = {
     logicIQ: 'Logic & IQ',
     grade: 'Grade',
     language: 'Language',
+    physics: 'Physics',
+    chemistry: 'Chemistry',
+    biology: 'Biology',
+    geography: 'Geography',
+    history: 'History',
+    informatics: 'Informatics',
   },
   russian: {
     startGame: 'Начать игру',
@@ -52,6 +64,12 @@ export const translations: Record<LanguageCode, TranslationSet> = {
     logicIQ: 'Логика и IQ',
     grade: 'Класс',
     language: 'Язык',
+    physics: 'Физика',
+    chemistry: 'Химия',
+    biology: 'Биология',
+    geography: 'География',
+    history: 'История',
+    informatics: 'Информатика',
   },
   kazakh: {
     startGame: 'Ойынды бастау',
@@ -69,5 +87,11 @@ export const translations: Record<LanguageCode, TranslationSet> = {
     logicIQ: 'Логика және IQ',
     grade: 'Сынып',
     language: 'Тіл',
+    physics: 'Физика',
+    chemistry: 'Химия',
+    biology: 'Биология',
+    geography: 'География',
+    history: 'Тарих',
+    informatics: 'Информатика',
   },
 };

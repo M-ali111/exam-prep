@@ -173,6 +173,13 @@ export const setupSocket = (io: Server) => {
           return;
         }
 
+        // Check if target user is already in a game
+        const targetUser = onlineUsers.get(targetSocketId);
+        if (targetUser && targetUser.status === 'in-game') {
+          socket.emit('game_request_failed', { message: 'User is already playing a game' });
+          return;
+        }
+
         const fromUser = onlineUsers.get(socket.id);
         io.to(targetSocketId).emit('game_request_received', {
           fromUserId,

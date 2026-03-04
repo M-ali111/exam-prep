@@ -85,6 +85,7 @@ export const SoloGame: React.FC<SoloGameProps> = ({ onBack }) => {
 
   // Calculate derived values at top level (before any conditional returns)
   const currentQuestion = questions[currentIndex];
+  const topicLabel = selectedTopic || 'General';
   const progressPercent = ((currentIndex + 1) / questions.length) * 100;
   const timerColor = visualTimeLeft > 20 ? '#22c55e' : visualTimeLeft > 10 ? '#f59e0b' : '#ef4444';
   const timerStrokeDashoffset = useMemo(() => {
@@ -198,8 +199,9 @@ export const SoloGame: React.FC<SoloGameProps> = ({ onBack }) => {
           'lastGameSettings',
           JSON.stringify({
             subject,
-            grade: selectedGrade ?? 0,
-            language,
+            topic: selectedTopic ?? 'general',
+            grade: 0,
+            language: selectedLanguage,
             mode: 'solo',
           })
         );
@@ -284,7 +286,7 @@ export const SoloGame: React.FC<SoloGameProps> = ({ onBack }) => {
             </div>
             <div className="bg-white rounded-2xl shadow-md p-3 text-center">
               <p className="text-xs text-gray-400">⏱️ Grade</p>
-              <p className="text-sm font-bold text-gray-900">{gradeLabel || selectedGrade || 'Logic'}</p>
+              <p className="text-sm font-bold text-gray-900">{topicLabel}</p>
             </div>
           </div>
 
@@ -318,8 +320,8 @@ export const SoloGame: React.FC<SoloGameProps> = ({ onBack }) => {
           <div className="space-y-3">
             <button
               onClick={() => {
-                if (subject) {
-                  startGame(selectedGrade ?? 0, subject as 'math' | 'logic');
+                if (subject && selectedTopic) {
+                  startGame(subject, selectedTopic);
                 }
               }}
               className="w-full bg-teal-500 text-white font-bold rounded-2xl min-h-[56px] text-lg shadow-sm hover:scale-105 transition-transform duration-200"

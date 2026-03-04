@@ -68,9 +68,11 @@ const AppContent: React.FC = () => {
     // If Math subject, show grade selection
     if (subject === 'math') {
       setAppState('grade-selection');
-    } else if (subject === 'english' || subject === 'logic') {
-      // For English and Logic, set default grade and go straight to the game
-      setSelectedGrade(subject === 'logic' ? 0 : 1); // Logic defaults to 0 (general), English defaults to 1
+    } else {
+      // For all other subjects (logic, english, physics, chemistry, biology, geography, history, informatics)
+      // Set default grade and go straight to the game
+      const defaultGrade = subject === 'logic' ? 0 : 1; // Logic defaults to 0 (general), others default to 1
+      setSelectedGrade(defaultGrade);
       if (mode === 'solo' || mode === 'random') {
         setAppState('solo');
       } else {

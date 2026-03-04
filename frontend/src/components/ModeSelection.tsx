@@ -51,10 +51,9 @@ export const ModeSelection: React.FC<ModeSelectionProps> = ({ onModeSelect, onBa
 
       quickPlayHandledRef.current = true;
 
-      if (subject === 'logic') {
-        localStorage.removeItem('quickPlayPending');
-        localStorage.removeItem('quickPlaySettings');
-      }
+      // Clear quick play settings for all subjects
+      localStorage.removeItem('quickPlayPending');
+      localStorage.removeItem('quickPlaySettings');
 
       onModeSelect('solo');
     } catch {

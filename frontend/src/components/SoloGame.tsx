@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useApi } from '../utils/api';
 import { useLanguage } from '../context/LanguageContext';
-import { useGame } from '../context/GameContext';
+import { useGame, Subject } from '../context/GameContext';
 import { translations } from '../utils/translations';
 
 interface Question {
@@ -103,7 +103,7 @@ export const SoloGame: React.FC<SoloGameProps> = ({ onBack }) => {
     return circumference - (visualTimeLeft / 30) * circumference;
   }, [visualTimeLeft]);
 
-  const startGame = async (grade: number, gameSubject: 'math' | 'logic') => {
+  const startGame = async (grade: number, gameSubject: Subject) => {
     setLoading(true);
     setWrongReviews([]);
     setReviewOpen(false);

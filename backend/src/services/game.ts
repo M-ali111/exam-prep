@@ -85,21 +85,79 @@ const ENGLISH_TOPICS_BY_GRADE: Record<number, string[]> = {
   3: ['complex grammar rules', 'reading comprehension with questions', 'essay understanding', 'vocabulary antonyms', 'subject-verb agreement', 'modal verbs', 'reported speech'],
 };
 
+const PHYSICS_TOPICS_BY_GRADE: Record<number, string[]> = {
+  1: ['motion and speed', 'forces and gravity', 'simple machines', 'light and shadows', 'magnets', 'sound waves', 'states of matter'],
+  2: ['energy types and transformation', 'work and power', 'pressure', 'heat and temperature', 'electricity basics', 'magnetism', 'simple circuits'],
+  3: ['Newton\'s laws', 'momentum', 'energy conservation', 'electric circuits', 'electromagnetic induction', 'wave properties', 'optics and lenses'],
+};
+
+const CHEMISTRY_TOPICS_BY_GRADE: Record<number, string[]> = {
+  1: ['matter properties', 'mixtures and solutions', 'elements and compounds', 'atomic structure basics', 'periodic table introduction', 'chemical vs physical changes'],
+  2: ['chemical reactions', 'acids and bases', 'pH scale', 'chemical bonding', 'ionic and covalent bonds', 'chemical equations', 'stoichiometry basics'],
+  3: ['oxidation and reduction', 'chemical equilibrium', 'reaction rates', 'organic chemistry introduction', 'hydrocarbons', 'functional groups', 'molar mass calculations'],
+};
+
+const BIOLOGY_TOPICS_BY_GRADE: Record<number, string[]> = {
+  1: ['cells and cell structure', 'plant and animal differences', 'human body systems', 'food chains and ecosystems', 'classification of living things', 'photosynthesis basics'],
+  2: ['cell division', 'genetics basics', 'DNA structure', 'heredity and traits', 'evolution introduction', 'ecosystems and biomes', 'human organ systems'],
+  3: ['genetics and inheritance', 'Mendelian genetics', 'DNA replication', 'protein synthesis', 'natural selection', 'human anatomy and physiology', 'microbiology basics'],
+};
+
+const GEOGRAPHY_TOPICS_BY_GRADE: Record<number, string[]> = {
+  1: ['continents and oceans', 'maps and globes', 'Kazakhstan geography', 'landforms', 'water bodies', 'weather and climate basics', 'natural resources'],
+  2: ['political geography', 'countries and capitals', 'population and settlements', 'economic geography', 'Kazakhstan regions', 'natural disasters', 'climate zones'],
+  3: ['physical geography advanced', 'Kazakhstan natural resources', 'global economic systems', 'urbanization', 'environmental issues', 'geopolitics', 'cultural geography'],
+};
+
+const HISTORY_TOPICS_BY_GRADE: Record<number, string[]> = {
+  1: ['ancient civilizations', 'Kazakhstan ancient history', 'Silk Road', 'nomadic cultures', 'early settlements', 'historical figures of Kazakhstan'],
+  2: ['medieval Kazakhstan', 'Kazakh Khanate', 'Golden Horde', 'independence of Kazakhstan', 'Soviet period', 'world history major events'],
+  3: ['modern Kazakhstan history', 'independence movement', 'contemporary Kazakhstan', 'world wars', 'major historical figures', 'cultural and political developments'],
+};
+
+const INFORMATICS_TOPICS_BY_GRADE: Record<number, string[]> = {
+  1: ['algorithms basics', 'flowcharts', 'sequences and loops', 'binary numbers', 'logic gates', 'basic programming concepts', 'problem solving'],
+  2: ['data structures', 'arrays and lists', 'sorting algorithms', 'searching algorithms', 'conditional statements', 'functions and procedures', 'computational thinking'],
+  3: ['advanced algorithms', 'recursion', 'object-oriented programming', 'database basics', 'networks and internet', 'cybersecurity basics', 'algorithm efficiency'],
+};
+
 function getGradeLabel(grade: number): string {
   return GRADE_LABELS[grade] || GRADE_LABELS[1];
 }
 
 function pickTopic(grade: number, subject: QuestionSubject = 'math'): string {
-  if (subject === 'logic') {
-    const topics = LOGIC_TOPICS_BY_GRADE[grade] || LOGIC_TOPICS_BY_GRADE[1];
-    return topics[Math.floor(Math.random() * topics.length)];
+  let topicPool: Record<number, string[]>;
+  
+  switch (subject) {
+    case 'logic':
+      topicPool = LOGIC_TOPICS_BY_GRADE;
+      break;
+    case 'english':
+      topicPool = ENGLISH_TOPICS_BY_GRADE;
+      break;
+    case 'physics':
+      topicPool = PHYSICS_TOPICS_BY_GRADE;
+      break;
+    case 'chemistry':
+      topicPool = CHEMISTRY_TOPICS_BY_GRADE;
+      break;
+    case 'biology':
+      topicPool = BIOLOGY_TOPICS_BY_GRADE;
+      break;
+    case 'geography':
+      topicPool = GEOGRAPHY_TOPICS_BY_GRADE;
+      break;
+    case 'history':
+      topicPool = HISTORY_TOPICS_BY_GRADE;
+      break;
+    case 'informatics':
+      topicPool = INFORMATICS_TOPICS_BY_GRADE;
+      break;
+    default: // math
+      topicPool = TOPICS_BY_GRADE;
   }
-  if (subject === 'english') {
-    const topics = ENGLISH_TOPICS_BY_GRADE[grade] || ENGLISH_TOPICS_BY_GRADE[1];
-    return topics[Math.floor(Math.random() * topics.length)];
-  }
-  // Default to math
-  const topics = TOPICS_BY_GRADE[grade] || TOPICS_BY_GRADE[1];
+  
+  const topics = topicPool[grade] || topicPool[1];
   return topics[Math.floor(Math.random() * topics.length)];
 }
 

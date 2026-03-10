@@ -7,7 +7,7 @@ interface OnboardingScreenProps {
 const slides = [
   {
     emoji: '🧠⚡',
-    title: 'Welcome to ZerekIQ!',
+    title: 'Welcome to Exam - Prep!',
     subtitle: 'Smart prep for NIS & BIL admission tests',
     bg: 'bg-gradient-to-br from-teal-500 to-teal-600',
   },
@@ -30,7 +30,7 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }
 
   const handleFinish = () => {
     localStorage.setItem('hasSeenOnboarding', 'true');
-    localStorage.removeItem('zerekIqJustSignedUp');
+    localStorage.removeItem('examPrepJustSignedUp');
     onComplete();
   };
 

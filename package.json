@@ -1,5 +1,5 @@
 {
-  "name": "maths-game",
+  "name": "exam-prep",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
@@ -11,5 +11,5 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "Math Game - Solo and Multiplayer Math Challenges"
+  "description": "Exam prep - Solo and Multiplayer Challenges"
 }

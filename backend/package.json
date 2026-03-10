@@ -1,7 +1,7 @@
 {
-  "name": "maths-game-backend",
+  "name": "exam-prep-backend",
   "version": "1.0.0",
-  "description": "Backend for Maths Game",
+  "description": "Backend for Exam prep",
   "main": "dist/index.js",
   "scripts": {
     "dev": "ts-node src/index.ts",

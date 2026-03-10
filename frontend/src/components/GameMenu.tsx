@@ -40,8 +40,8 @@ export const GameMenu: React.FC<GameMenuProps> = ({ onSelectSubject, onSelectNav
   const totalGames = (user as any)?.totalGamesPlayed || 0;
   const totalWins = (user as any)?.totalWins || 0;
   const winRate = totalGames > 0 ? Math.round((totalWins / totalGames) * 100) : 0;
-  const mathAccuracy = Number(localStorage.getItem('zerekIqMathAccuracy') || 0);
-  const logicAccuracy = Number(localStorage.getItem('zerekIqLogicAccuracy') || 0);
+  const mathAccuracy = Number(localStorage.getItem('examPrepMathAccuracy') || 0);
+  const logicAccuracy = Number(localStorage.getItem('examPrepLogicAccuracy') || 0);
 
   useEffect(() => {
     const storedSettings = localStorage.getItem('lastGameSettings');
@@ -167,7 +167,7 @@ export const GameMenu: React.FC<GameMenuProps> = ({ onSelectSubject, onSelectNav
   return (
     <div className="flex flex-col min-h-screen bg-amber-50 overflow-y-auto animate-fade-in">
       <div className="bg-white shadow-sm px-4 py-4 text-center">
-        <div className="text-xl font-bold text-gray-900">🧠 ZerekIQ</div>
+        <div className="text-xl font-bold text-gray-900">🧠 Exam - Prep</div>
         <p className="text-lg font-bold text-gray-900 mt-2">Welcome back, {user?.username}! 👋</p>
         {streakData.currentStreak > 0 && (
           <p className="text-sm font-medium text-gray-600 mt-1">🔥 {streakData.currentStreak} day streak</p>

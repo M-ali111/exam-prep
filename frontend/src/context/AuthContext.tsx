@@ -31,7 +31,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setToken(null);
     localStorage.removeItem('token');
     localStorage.removeItem('user');
-    localStorage.removeItem('zerekIqJustSignedUp');
+    localStorage.removeItem('examPrepJustSignedUp');
   };
 
   const isTokenExpired = (jwtToken: string): boolean => {

@@ -18,7 +18,6 @@ const io = new Server(httpServer, {
       'http://localhost:3000',
       'http://localhost:3001',
       'http://localhost:5173',
-      'https://math-game-frontend-aihx.onrender.com',
       process.env.FRONTEND_URL || ''
     ],
     credentials: true,
@@ -32,7 +31,6 @@ app.use(cors({
     'http://localhost:3000',
     'http://localhost:3001',
     'http://localhost:5173',
-    'https://math-game-frontend-aihx.onrender.com',
     process.env.FRONTEND_URL || ''
   ],
   credentials: true

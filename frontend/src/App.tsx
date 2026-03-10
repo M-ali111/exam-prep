@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from './context/AuthContext';
-import { useGame, Subject } from './context/GameContext';
+import { useGame } from './context/GameContext';
 import { Login } from './components/Login';
 import { GameMenu } from './components/GameMenu';
 import { ModeSelection } from './components/ModeSelection';
-import { TopicSelection } from './components/TopicSelection';
 import { SoloGame } from './components/SoloGame';
 import { MultiplayerGame } from './components/MultiplayerGame';
 import { Stats } from './components/Stats';
@@ -15,7 +14,6 @@ type AppState =
   | 'login' 
   | 'menu' 
   | 'mode-selection'
-  | 'topic-selection'
   | 'solo' 
   | 'multiplayer' 
   | 'stats'
@@ -23,10 +21,9 @@ type AppState =
 
 const AppContent: React.FC = () => {
   const [appState, setAppState] = useState<AppState>('login');
-  const [selectedGameMode, setSelectedGameMode] = useState<'solo' | 'multiplayer' | 'random' | null>(null);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const { user, token, logout } = useAuth();
-  const { subject, setSubject, setSelectedMode, setSelectedTopic, resetGameFlow } = useGame();
+  const { setSelectedMode, setSubject, resetGameFlow } = useGame();
 
   useEffect(() => {
     if (token && user) {
@@ -47,8 +44,8 @@ const AppContent: React.FC = () => {
     setAppState('login');
   };
 
-  const handleSelectSubject = (selectedSubject: Subject) => {
-    setSubject(selectedSubject);
+  const handleSelectSubject = (subject: 'mathematics' | 'natural_sciences' | 'english_language' | 'quantitative_aptitude') => {
+    setSubject(subject);
     setAppState('mode-selection');
   };
 
@@ -61,18 +58,10 @@ const AppContent: React.FC = () => {
   };
 
   const handleModeSelected = (mode: 'solo' | 'multiplayer' | 'random') => {
-    setSelectedGameMode(mode);
     const actualMode = mode === 'random' ? 'solo' : mode; // Convert random to solo for context
     setSelectedMode(actualMode);
-    
-    // All subjects go to topic selection
-    setAppState('topic-selection');
-  };
 
-  const handleTopicSelected = (topic: string) => {
-    setSelectedTopic(topic);
-    // After topic selection, go to the game
-    if (selectedGameMode === 'solo' || selectedGameMode === 'random') {
+    if (mode === 'solo' || mode === 'random') {
       setAppState('solo');
     } else {
       setAppState('multiplayer');
@@ -81,10 +70,6 @@ const AppContent: React.FC = () => {
 
   const handleBackFromModeSelection = () => {
     setAppState('menu');
-  };
-
-  const handleBackFromTopicSelection = () => {
-    setAppState('mode-selection');
   };
 
   const handleBack = () => {
@@ -107,16 +92,10 @@ const AppContent: React.FC = () => {
           onLogout={handleLogout}
         />
       )}
-      {appState === 'mode-selection' && subject && (
+      {appState === 'mode-selection' && (
         <ModeSelection 
           onModeSelect={handleModeSelected}
           onBack={handleBackFromModeSelection}
-        />
-      )}
-      {appState === 'topic-selection' && subject && (
-        <TopicSelection 
-          onTopicSelected={handleTopicSelected}
-          onBack={handleBackFromTopicSelection}
         />
       )}
       {appState === 'solo' && <SoloGame onBack={handleBack} />}

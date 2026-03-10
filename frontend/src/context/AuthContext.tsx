@@ -6,6 +6,9 @@ interface User {
   id: string;
   email: string;
   username: string;
+  schoolName: string;
+  city: string;
+  centerName: string;
   rating: number;
   currentDifficulty: number;
 }
@@ -14,7 +17,14 @@ interface AuthContextType {
   user: User | null;
   token: string | null;
   login: (email: string, password: string) => Promise<void>;
-  signup: (email: string, username: string, password: string) => Promise<void>;
+  signup: (
+    email: string,
+    username: string,
+    password: string,
+    schoolName: string,
+    city: string,
+    centerName: string
+  ) => Promise<void>;
   logout: () => void;
 }
 
@@ -103,11 +113,18 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     localStorage.setItem('token', token);
   };
 
-  const signup = async (email: string, username: string, password: string) => {
+  const signup = async (
+    email: string,
+    username: string,
+    password: string,
+    schoolName: string,
+    city: string,
+    centerName: string
+  ) => {
     const response = await fetch(`${API_URL}/api/auth/signup`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, username, password }),
+      body: JSON.stringify({ email, username, password, schoolName, city, centerName }),
     });
 
     if (!response.ok) {

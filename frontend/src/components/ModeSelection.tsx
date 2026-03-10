@@ -62,57 +62,7 @@ export const ModeSelection: React.FC<ModeSelectionProps> = ({ onModeSelect, onBa
     }
   }, [onModeSelect, setLanguage, subject]);
 
-  const isMath = subject === 'math';
-  const isLogic = subject === 'logic';
-  const isEnglish = subject === 'english';
-  const isPhysics = subject === 'physics';
-  const isChemistry = subject === 'chemistry';
-  const isBiology = subject === 'biology';
-  const isGeography = subject === 'geography';
-  const isHistory = subject === 'history';
-  const isInformatics = subject === 'informatics';
-
-  const getButtonColor = () => {
-    if (isMath) return 'bg-teal-500 hover:bg-teal-600 text-white';
-    if (isLogic) return 'bg-purple-500 hover:bg-purple-600 text-white';
-    if (isEnglish) return 'bg-amber-500 hover:bg-amber-600 text-white';
-    if (isPhysics) return 'bg-indigo-500 hover:bg-indigo-600 text-white';
-    if (isChemistry) return 'bg-green-500 hover:bg-green-600 text-white';
-    if (isBiology) return 'bg-teal-400 hover:bg-teal-500 text-white';
-    if (isGeography) return 'bg-cyan-500 hover:bg-cyan-600 text-white';
-    if (isHistory) return 'bg-rose-500 hover:bg-rose-600 text-white';
-    if (isInformatics) return 'bg-slate-500 hover:bg-slate-600 text-white';
-    return 'bg-gray-500 hover:bg-gray-600 text-white';
-  };
-
-  const getHeaderColor = () => {
-    if (isMath) return 'bg-teal-50 text-teal-700';
-    if (isLogic) return 'bg-purple-50 text-purple-700';
-    if (isEnglish) return 'bg-amber-50 text-amber-700';
-    if (isPhysics) return 'bg-indigo-50 text-indigo-700';
-    if (isChemistry) return 'bg-green-50 text-green-700';
-    if (isBiology) return 'bg-teal-50 text-teal-700';
-    if (isGeography) return 'bg-cyan-50 text-cyan-700';
-    if (isHistory) return 'bg-rose-50 text-rose-700';
-    if (isInformatics) return 'bg-slate-50 text-slate-700';
-    return 'bg-gray-50 text-gray-700';
-  };
-
-  const getSubjectLabel = () => {
-    if (isMath) return '🔢 Mathematics';
-    if (isLogic) return '🧠 Logic & IQ';
-    if (isEnglish) return '📚 English';
-    if (isPhysics) return '⚛️ Physics';
-    if (isChemistry) return '🧪 Chemistry';
-    if (isBiology) return '🧬 Biology';
-    if (isGeography) return '🌍 Geography';
-    if (isHistory) return '📜 History';
-    if (isInformatics) return '💻 Informatics';
-    return '📚 Subject';
-  };
-
-  const buttonColor = getButtonColor();
-  const headerBgColor = getHeaderColor();
+  const buttonColor = 'bg-teal-500 hover:bg-teal-600 text-white';
 
   return (
     <div className="flex flex-col min-h-screen bg-amber-50 animate-fade-in">
@@ -130,9 +80,9 @@ export const ModeSelection: React.FC<ModeSelectionProps> = ({ onModeSelect, onBa
         <div className="w-[60px]"></div>
       </div>
 
-      {/* Subject info */}
-      <div className={`${headerBgColor} text-center px-4 py-3 text-base sm:text-sm font-semibold`}>
-        {getSubjectLabel()}
+      {/* Subject removed from flow; use a generic header bar */}
+      <div className="bg-gray-50 text-gray-700 text-center px-4 py-3 text-base sm:text-sm font-semibold">
+        Exam Practice
       </div>
 
       {/* Main content */}

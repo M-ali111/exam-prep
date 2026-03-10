@@ -5,7 +5,14 @@ import { generateToken } from '../utils/jwt';
 const prisma = new PrismaClient();
 
 export const authService = {
-  async signup(email: string, username: string, password: string) {
+  async signup(
+    email: string,
+    username: string,
+    password: string,
+    schoolName: string,
+    city: string,
+    centerName: string
+  ) {
     const existingUser = await prisma.user.findFirst({
       where: { OR: [{ email }, { username }] },
     });
@@ -20,6 +27,9 @@ export const authService = {
       data: {
         email,
         username,
+        schoolName,
+        city,
+        centerName,
         password: hashedPassword,
       },
     });
@@ -31,6 +41,9 @@ export const authService = {
         id: user.id,
         email: user.email,
         username: user.username,
+        schoolName: user.schoolName,
+        city: user.city,
+        centerName: user.centerName,
         rating: user.rating,
         currentDifficulty: user.currentDifficulty,
       },
@@ -60,6 +73,9 @@ export const authService = {
         id: user.id,
         email: user.email,
         username: user.username,
+        schoolName: user.schoolName,
+        city: user.city,
+        centerName: user.centerName,
         rating: user.rating,
         currentDifficulty: user.currentDifficulty,
       },
@@ -74,6 +90,9 @@ export const authService = {
         id: true,
         email: true,
         username: true,
+        schoolName: true,
+        city: true,
+        centerName: true,
         rating: true,
         currentDifficulty: true,
         totalGamesPlayed: true,

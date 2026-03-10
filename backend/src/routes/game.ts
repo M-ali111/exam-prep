@@ -12,11 +12,9 @@ function parseLanguage(value: unknown): 'english' | 'russian' | 'kazakh' {
   throw new Error('Invalid language option.');
 }
 
-function parseSubject(value: unknown): 'math' | 'logic' | 'english' | 'physics' | 'chemistry' | 'biology' | 'geography' | 'history' | 'informatics' {
-  if (!value) return 'math';
-  const validSubjects = ['math', 'logic', 'english', 'physics', 'chemistry', 'biology', 'geography', 'history', 'informatics'];
-  if (validSubjects.includes(value as string)) {
-    return value as any;
+function parseSubject(value: unknown): 'mathematics' | 'natural_sciences' | 'english_language' | 'quantitative_aptitude' {
+  if (value === 'mathematics' || value === 'natural_sciences' || value === 'english_language' || value === 'quantitative_aptitude') {
+    return value;
   }
   throw new Error('Invalid subject option.');
 }
@@ -24,15 +22,15 @@ function parseSubject(value: unknown): 'math' | 'logic' | 'english' | 'physics' 
 // Solo game routes
 router.post('/solo/start', authMiddleware, async (req: Request, res: Response) => {
   try {
-    const { topic, language, subject } = req.body;
+    const { subject, language } = req.body;
     
-    if (topic === undefined || language === undefined || subject === undefined) {
-      return res.status(400).json({ error: 'Missing required fields: topic, language, subject' });
+    if (subject === undefined || language === undefined) {
+      return res.status(400).json({ error: 'Missing required fields: subject, language' });
     }
     
     const parsedLanguage = parseLanguage(language);
     const parsedSubject = parseSubject(subject);
-    const gameData = await gameService.createSoloGame(req.userId!, topic, parsedLanguage, parsedSubject);
+    const gameData = await gameService.createSoloGame(req.userId!, parsedLanguage, parsedSubject);
     res.json(gameData);
   } catch (error: any) {
     res.status(400).json({ error: error.message });
@@ -76,15 +74,15 @@ router.post('/solo/:gameId/complete', authMiddleware, async (req: Request, res: 
 // Multiplayer game routes
 router.post('/multiplayer/create', authMiddleware, async (req: Request, res: Response) => {
   try {
-    const { topic, language, subject } = req.body;
+    const { subject, language } = req.body;
     
-    if (topic === undefined || language === undefined || subject === undefined) {
-      return res.status(400).json({ error: 'Missing required fields: topic, language, subject' });
+    if (subject === undefined || language === undefined) {
+      return res.status(400).json({ error: 'Missing required fields: subject, language' });
     }
     
     const parsedLanguage = parseLanguage(language);
     const parsedSubject = parseSubject(subject);
-    const gameData = await gameService.createMultiplayerGame(req.userId!, topic, parsedLanguage, parsedSubject);
+    const gameData = await gameService.createMultiplayerGame(req.userId!, parsedLanguage, parsedSubject);
     res.json(gameData);
   } catch (error: any) {
     res.status(400).json({ error: error.message });
@@ -94,19 +92,19 @@ router.post('/multiplayer/create', authMiddleware, async (req: Request, res: Res
 router.post('/multiplayer/:gameId/join', authMiddleware, async (req: Request, res: Response) => {
   try {
     const { gameId } = req.params;
-    const { topic, language, subject } = req.body;
+    const { subject, language } = req.body;
     
     if (!gameId) {
       return res.status(400).json({ error: 'Missing required field: gameId' });
     }
     
-    if (topic === undefined || language === undefined || subject === undefined) {
-      return res.status(400).json({ error: 'Missing required fields: topic, language, subject' });
+    if (subject === undefined || language === undefined) {
+      return res.status(400).json({ error: 'Missing required fields: subject, language' });
     }
     
     const parsedLanguage = parseLanguage(language);
     const parsedSubject = parseSubject(subject);
-    const result = await gameService.joinMultiplayerGame(gameId, req.userId!, topic, parsedLanguage, parsedSubject);
+    const result = await gameService.joinMultiplayerGame(gameId, req.userId!, parsedLanguage, parsedSubject);
     res.json(result);
   } catch (error: any) {
     res.status(400).json({ error: error.message });

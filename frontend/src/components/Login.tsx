@@ -7,6 +7,9 @@ export const Login: React.FC<{ onLoginSuccess: () => void }> = ({ onLoginSuccess
   const [error, setError] = useState('');
   const [isSignup, setIsSignup] = useState(false);
   const [username, setUsername] = useState('');
+  const [schoolName, setSchoolName] = useState('');
+  const [city, setCity] = useState('');
+  const [centerName, setCenterName] = useState('');
   const { login, signup } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -15,7 +18,7 @@ export const Login: React.FC<{ onLoginSuccess: () => void }> = ({ onLoginSuccess
 
     try {
       if (isSignup) {
-        await signup(email, username, password);
+        await signup(email, username, password, schoolName, city, centerName);
         localStorage.setItem('examPrepJustSignedUp', 'true');
       } else {
         await login(email, password);
@@ -37,14 +40,40 @@ export const Login: React.FC<{ onLoginSuccess: () => void }> = ({ onLoginSuccess
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           {isSignup && (
-            <input
-              type="text"
-              placeholder="Username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              className="px-4 py-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-400 text-base"
-              required
-            />
+            <>
+              <input
+                type="text"
+                placeholder="Name"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                className="px-4 py-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-400 text-base"
+                required
+              />
+              <input
+                type="text"
+                placeholder="School name"
+                value={schoolName}
+                onChange={(e) => setSchoolName(e.target.value)}
+                className="px-4 py-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-400 text-base"
+                required
+              />
+              <input
+                type="text"
+                placeholder="City"
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+                className="px-4 py-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-400 text-base"
+                required
+              />
+              <input
+                type="text"
+                placeholder="Center name"
+                value={centerName}
+                onChange={(e) => setCenterName(e.target.value)}
+                className="px-4 py-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-400 text-base"
+                required
+              />
+            </>
           )}
           <input
             type="email"

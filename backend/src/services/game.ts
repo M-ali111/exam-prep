@@ -5,6 +5,50 @@ import { generateNisBilQuestions, NisBilDifficulty, NisBilQuestion, QuestionLang
 import { recordGameForDay, updateStreakStatus } from './streak';
 
 const prisma = new PrismaClient();
+type NilSubject = 'mathematics' | 'natural_sciences' | 'english_language' | 'quantitative_aptitude';
+
+const TOPICS_BY_SUBJECT: Record<NilSubject, string[]> = {
+  mathematics: [
+    'algebra equations',
+    'fractions and decimals',
+    'ratios and percentages',
+    'geometry basics',
+    'word problems',
+  ],
+  natural_sciences: [
+    'motion and forces',
+    'atomic structure',
+    'cell structure and function',
+    'energy and work',
+    'chemical reactions',
+  ],
+  english_language: [
+    'grammar and sentence structure',
+    'reading comprehension',
+    'vocabulary and word meaning',
+    'tenses and verb forms',
+    'synonyms and antonyms',
+  ],
+  quantitative_aptitude: [
+    'number sequences',
+    'pattern recognition',
+    'logical deductions',
+    'analogies',
+    'data interpretation',
+  ],
+};
+
+function pickRandomTopic(subject: NilSubject): string {
+  const topics = TOPICS_BY_SUBJECT[subject];
+  return topics[Math.floor(Math.random() * topics.length)];
+}
+
+function mapNilSubjectToAiSubject(subject: NilSubject): QuestionSubject {
+  if (subject === 'mathematics') return 'math';
+  if (subject === 'english_language') return 'english';
+  if (subject === 'quantitative_aptitude') return 'logic';
+  return ['physics', 'chemistry', 'biology'][Math.floor(Math.random() * 3)] as QuestionSubject;
+}
 
 function allowsDecimals(grade: number): boolean {
   return grade >= 5;
@@ -150,7 +194,7 @@ export const gameService = {
   /**
    * Create a new solo game
    */
-  async createSoloGame(userId: string, topic: string, language: QuestionLanguage, subject: QuestionSubject = 'math') {
+  async createSoloGame(userId: string, language: QuestionLanguage, subject: NilSubject) {
     // Get user's current difficulty
     const user = await prisma.user.findUnique({
       where: { id: userId },
@@ -162,6 +206,9 @@ export const gameService = {
 
     const adaptiveDifficulty = await getAdaptiveDifficulty(userId);
 
+    const aiSubject = mapNilSubjectToAiSubject(subject);
+    const topic = pickRandomTopic(subject);
+
     // Create game
     const game = await prisma.game.create({
       data: {
@@ -169,6 +216,7 @@ export const gameService = {
         createdBy: userId,
         difficulty: adaptiveDifficulty.value,
         grade: 0,
+        subject,
       },
     });
 
@@ -187,13 +235,13 @@ export const gameService = {
       count: 10,
       difficulty: adaptiveDifficulty.label,
       language,
-      subject,
+      subject: aiSubject,
       difficultyValue: adaptiveDifficulty.value,
     });
 
     for (let i = 0; i < aiQuestions.length; i++) {
       const aiQ = aiQuestions[i];
-      const question = await upsertQuestionFromAi(aiQ, adaptiveDifficulty.value, language, subject);
+      const question = await upsertQuestionFromAi(aiQ, adaptiveDifficulty.value, language, aiSubject);
 
       await prisma.gameQuestion.create({
         data: {
@@ -308,7 +356,7 @@ export const gameService = {
   /**
    * Create multiplayer game
    */
-  async createMultiplayerGame(userId: string, topic: string, _language: QuestionLanguage, subject: QuestionSubject = 'math') {
+  async createMultiplayerGame(userId: string, _language: QuestionLanguage, subject: NilSubject) {
     const user = await prisma.user.findUnique({
       where: { id: userId },
     });
@@ -340,14 +388,14 @@ export const gameService = {
     return {
       gameId: game.id,
       createdBy: userId,
-      topic,
+      subject,
     };
   },
 
   /**
    * Join multiplayer game
    */
-  async joinMultiplayerGame(gameId: string, userId: string, topic: string, language: QuestionLanguage, subject: QuestionSubject = 'math') {
+  async joinMultiplayerGame(gameId: string, userId: string, language: QuestionLanguage, subject: NilSubject) {
     const game = await prisma.game.findUnique({
       where: { id: gameId },
     });
@@ -358,6 +406,10 @@ export const gameService = {
 
     if (game.status !== 'active') {
       throw new Error('Game is not active');
+    }
+
+    if (game.subject !== subject) {
+      throw new Error('Selected subject does not match this game room');
     }
 
     // Check if user already joined
@@ -401,7 +453,9 @@ export const gameService = {
         const storedQuestions = [] as Array<{ id: string; text: string; options: string[]; difficulty: number; explanation: string | null }>;
 
         const difficultyLabel: NisBilDifficulty = game.difficulty >= 8 ? 'hard' : game.difficulty >= 5 ? 'medium' : 'easy';
-        const gameSubject = (game as any).subject as QuestionSubject || 'math';
+        const nilSubject = game.subject as NilSubject;
+        const gameSubject: QuestionSubject = mapNilSubjectToAiSubject(nilSubject);
+        const topic = pickRandomTopic(nilSubject);
         
         const aiQuestions = await getNisBilQuestions({
           topic,
@@ -437,7 +491,7 @@ export const gameService = {
         return {
           gameId,
           status: 'ready',
-          topic,
+          subject: nilSubject,
           questions: storedQuestions,
         };
       }

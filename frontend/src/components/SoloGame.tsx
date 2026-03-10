@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useApi } from '../utils/api';
 import { useLanguage } from '../context/LanguageContext';
-import { useGame, Subject } from '../context/GameContext';
+import { useGame } from '../context/GameContext';
 import { translations } from '../utils/translations';
 
 interface Question {
@@ -38,14 +38,14 @@ export const SoloGame: React.FC<SoloGameProps> = ({ onBack }) => {
   const [animatedXp, setAnimatedXp] = useState(0);
   const { request } = useApi();
   const { language } = useLanguage();
-  const { subject, selectedTopic, selectedLanguage } = useGame();
+  const { subject, selectedLanguage } = useGame();
   const t = translations[language];
 
   useEffect(() => {
-    if (selectedTopic !== null && subject !== null) {
-      startGame(subject, selectedTopic);
+    if (subject !== null) {
+      startGame(subject);
     }
-  }, [selectedTopic, subject]);
+  }, [subject]);
 
   useEffect(() => {
     if (!gameStarted || gameCompleted) return;
@@ -85,7 +85,14 @@ export const SoloGame: React.FC<SoloGameProps> = ({ onBack }) => {
 
   // Calculate derived values at top level (before any conditional returns)
   const currentQuestion = questions[currentIndex];
-  const topicLabel = selectedTopic || 'General';
+  const subjectLabel = subject
+    ? {
+        mathematics: 'Mathematics',
+        natural_sciences: 'Natural Sciences',
+        english_language: 'English Language',
+        quantitative_aptitude: 'Quantitative Aptitude',
+      }[subject]
+    : 'General';
   const progressPercent = ((currentIndex + 1) / questions.length) * 100;
   const timerColor = visualTimeLeft > 20 ? '#22c55e' : visualTimeLeft > 10 ? '#f59e0b' : '#ef4444';
   const timerStrokeDashoffset = useMemo(() => {
@@ -93,7 +100,7 @@ export const SoloGame: React.FC<SoloGameProps> = ({ onBack }) => {
     return circumference - (visualTimeLeft / 30) * circumference;
   }, [visualTimeLeft]);
 
-  const startGame = async (gameSubject: Subject, topic: string) => {
+  const startGame = async (selectedSubject: string) => {
     setLoading(true);
     setWrongReviews([]);
     setReviewOpen(false);
@@ -109,11 +116,7 @@ export const SoloGame: React.FC<SoloGameProps> = ({ onBack }) => {
     try {
       const data = await request('/games/solo/start', {
         method: 'POST',
-        body: JSON.stringify({ 
-          topic, 
-          language: subject === 'english' ? 'english' : selectedLanguage, 
-          subject: gameSubject 
-        }),
+        body: JSON.stringify({ subject: selectedSubject, language: selectedLanguage }),
       });
       setGameId(data.gameId);
       setQuestions(data.questions);
@@ -194,18 +197,14 @@ export const SoloGame: React.FC<SoloGameProps> = ({ onBack }) => {
       setGameResult(result);
       setGameCompleted(true);
 
-      if (subject) {
-        localStorage.setItem(
-          'lastGameSettings',
-          JSON.stringify({
-            subject,
-            topic: selectedTopic ?? 'general',
-            grade: 0,
-            language: selectedLanguage,
-            mode: 'solo',
-          })
-        );
-      }
+      localStorage.setItem(
+        'lastGameSettings',
+        JSON.stringify({
+          subject: subject ?? 'mathematics',
+          language: selectedLanguage,
+          mode: 'solo',
+        })
+      );
     } catch (error: any) {
       alert(error.message);
     }
@@ -285,8 +284,8 @@ export const SoloGame: React.FC<SoloGameProps> = ({ onBack }) => {
               <p className="text-xl font-bold text-gray-900">{wrongAnswers}/{totalAnswers}</p>
             </div>
             <div className="bg-white rounded-2xl shadow-md p-3 text-center">
-              <p className="text-xs text-gray-400">⏱️ Grade</p>
-              <p className="text-sm font-bold text-gray-900">{topicLabel}</p>
+              <p className="text-xs text-gray-400">📚 Subject</p>
+              <p className="text-sm font-bold text-gray-900">{subjectLabel}</p>
             </div>
           </div>
 
@@ -320,8 +319,8 @@ export const SoloGame: React.FC<SoloGameProps> = ({ onBack }) => {
           <div className="space-y-3">
             <button
               onClick={() => {
-                if (subject && selectedTopic) {
-                  startGame(subject, selectedTopic);
+                if (subject) {
+                  startGame(subject);
                 }
               }}
               className="w-full bg-teal-500 text-white font-bold rounded-2xl min-h-[56px] text-lg shadow-sm hover:scale-105 transition-transform duration-200"
@@ -397,37 +396,9 @@ export const SoloGame: React.FC<SoloGameProps> = ({ onBack }) => {
       <div className="flex-1 px-4 py-6 max-w-md mx-auto w-full space-y-4">
         {currentQuestion && (
           <>
-            <div className={`bg-white rounded-2xl shadow-md p-5 text-center border-t-4 ${
-              currentQuestion.subject === 'math' ? 'border-teal-500' :
-              currentQuestion.subject === 'logic' ? 'border-purple-500' :
-              currentQuestion.subject === 'english' ? 'border-amber-500' :
-              currentQuestion.subject === 'physics' ? 'border-indigo-500' :
-              currentQuestion.subject === 'chemistry' ? 'border-green-500' :
-              currentQuestion.subject === 'biology' ? 'border-teal-500' :
-              currentQuestion.subject === 'geography' ? 'border-cyan-500' :
-              currentQuestion.subject === 'history' ? 'border-rose-500' :
-              currentQuestion.subject === 'informatics' ? 'border-slate-500' : 'border-gray-500'
-            }`}>
-              <span className={`inline-flex px-3 py-1 rounded-full text-sm text-white font-bold mb-4 ${
-                currentQuestion.subject === 'math' ? 'bg-teal-500' :
-                currentQuestion.subject === 'logic' ? 'bg-purple-500' :
-                currentQuestion.subject === 'english' ? 'bg-amber-500' :
-                currentQuestion.subject === 'physics' ? 'bg-indigo-500' :
-                currentQuestion.subject === 'chemistry' ? 'bg-green-500' :
-                currentQuestion.subject === 'biology' ? 'bg-teal-500' :
-                currentQuestion.subject === 'geography' ? 'bg-cyan-500' :
-                currentQuestion.subject === 'history' ? 'bg-rose-500' :
-                currentQuestion.subject === 'informatics' ? 'bg-slate-500' : 'bg-gray-500'
-              }`}>
-                {currentQuestion.subject === 'math' ? '🔢 Math' :
-                 currentQuestion.subject === 'logic' ? '🧠 Logic' :
-                 currentQuestion.subject === 'english' ? '📚 English' :
-                 currentQuestion.subject === 'physics' ? '⚛️ Physics' :
-                 currentQuestion.subject === 'chemistry' ? '🧪 Chemistry' :
-                 currentQuestion.subject === 'biology' ? '🧬 Biology' :
-                 currentQuestion.subject === 'geography' ? '🌍 Geography' :
-                 currentQuestion.subject === 'history' ? '📜 History' :
-                 currentQuestion.subject === 'informatics' ? '💻 Informatics' : '📚 Subject'}
+            <div className="bg-white rounded-2xl shadow-md p-5 text-center border-t-4 border-teal-500">
+              <span className="inline-flex px-3 py-1 rounded-full text-sm text-white font-bold mb-4 bg-teal-500">
+                🎯 Exam Prep
               </span>
               <h2 className="text-xl font-semibold text-gray-900 min-h-[150px] flex items-center justify-center leading-relaxed">
                 {currentQuestion.text}

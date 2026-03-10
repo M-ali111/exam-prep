@@ -1,8 +1,8 @@
 import React, { createContext, useContext, useMemo, useState, useCallback, ReactNode } from 'react';
 
-export type Subject = 'math' | 'logic' | 'english' | 'physics' | 'chemistry' | 'biology' | 'geography' | 'history' | 'informatics';
+export type Subject = 'mathematics' | 'natural_sciences' | 'english_language' | 'quantitative_aptitude';
 export type GameMode = 'solo' | 'multiplayer';
-export type GameFlowStep = 'subject' | 'mode' | 'topic' | 'language' | 'playing';
+export type GameFlowStep = 'subject' | 'mode' | 'language' | 'playing';
 export type QuestionLanguage = 'english' | 'russian' | 'kazakh';
 
 interface GameContextType {
@@ -10,8 +10,6 @@ interface GameContextType {
   setSubject: (subject: Subject) => void;
   selectedMode: GameMode | null;
   setSelectedMode: (mode: GameMode) => void;
-  selectedTopic: string | null;
-  setSelectedTopic: (topic: string) => void;
   selectedLanguage: QuestionLanguage;
   setSelectedLanguage: (language: QuestionLanguage) => void;
   currentStep: GameFlowStep;
@@ -27,11 +25,10 @@ const LANGUAGE_STORAGE_KEY = 'selectedLanguage';
 export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [subject, setSubjectState] = useState<Subject | null>(() => {
     const stored = localStorage.getItem(SUBJECT_STORAGE_KEY) as Subject | null;
-    const validSubjects = ['math', 'logic', 'english', 'physics', 'chemistry', 'biology', 'geography', 'history', 'informatics'];
+    const validSubjects: Subject[] = ['mathematics', 'natural_sciences', 'english_language', 'quantitative_aptitude'];
     return stored && validSubjects.includes(stored) ? stored : null;
   });
   const [selectedMode, setSelectedMode] = useState<GameMode | null>(null);
-  const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
   const [selectedLanguage, setSelectedLanguageState] = useState<QuestionLanguage>(() => {
     const stored = localStorage.getItem(LANGUAGE_STORAGE_KEY) as QuestionLanguage | null;
     const validLanguages = ['english', 'russian', 'kazakh'];
@@ -53,7 +50,6 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const resetGameFlow = useCallback(() => {
     setSelectedMode(null);
-    setSelectedTopic(null);
     setCurrentStep('subject');
   }, []);
 
@@ -63,15 +59,13 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       setSubject,
       selectedMode,
       setSelectedMode,
-      selectedTopic,
-      setSelectedTopic,
       selectedLanguage,
       setSelectedLanguage,
       currentStep,
       setCurrentStep,
       resetGameFlow,
     }),
-    [subject, setSubject, selectedMode, selectedTopic, selectedLanguage, setSelectedLanguage, currentStep, resetGameFlow]
+    [subject, setSubject, selectedMode, selectedLanguage, setSelectedLanguage, currentStep, resetGameFlow]
   );
 
   return <GameContext.Provider value={value}>{children}</GameContext.Provider>;

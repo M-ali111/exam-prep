@@ -32,7 +32,6 @@ export const GameMenu: React.FC<GameMenuProps> = ({ onSelectSubject, onSelectNav
   });
   const [lastGameSettings, setLastGameSettings] = useState<{
     subject: Subject;
-    grade: number;
     language: 'english' | 'russian' | 'kazakh';
     mode: 'solo';
   } | null>(null);
@@ -48,7 +47,7 @@ export const GameMenu: React.FC<GameMenuProps> = ({ onSelectSubject, onSelectNav
     if (storedSettings) {
       try {
         const parsed = JSON.parse(storedSettings);
-        if (parsed?.subject && parsed?.grade && parsed?.language && parsed?.mode === 'solo') {
+        if (parsed?.subject && parsed?.language && parsed?.mode === 'solo') {
           setLastGameSettings(parsed);
         }
       } catch {
@@ -71,31 +70,19 @@ export const GameMenu: React.FC<GameMenuProps> = ({ onSelectSubject, onSelectNav
 
   const quickPlayLabel = useMemo(() => {
     if (!lastGameSettings) return '';
-    const subjectLabels: Record<Subject, string> = {
-      math: 'Math',
-      logic: 'Logic',
-      english: 'English',
-      physics: 'Physics',
-      chemistry: 'Chemistry',
-      biology: 'Biology',
-      geography: 'Geography',
-      history: 'History',
-      informatics: 'Informatics',
-    };
-    const subjectLabel = subjectLabels[lastGameSettings.subject];
-    const gradeLabel =
-      lastGameSettings.grade === 1
-        ? 'Primary 1-6'
-        : lastGameSettings.grade === 2
-        ? 'Grade 5→6'
-        : 'Grade 6→7';
     const languageLabel =
       lastGameSettings.language === 'english'
         ? 'English'
         : lastGameSettings.language === 'russian'
         ? 'Russian'
         : 'Kazakh';
-    return `⚡ Quick Play — ${subjectLabel}, ${gradeLabel}, ${languageLabel}`;
+    const subjectLabelMap: Record<Subject, string> = {
+      mathematics: 'Mathematics',
+      natural_sciences: 'Natural Sciences',
+      english_language: 'English Language',
+      quantitative_aptitude: 'Quantitative Aptitude',
+    };
+    return `⚡ Quick Play — ${subjectLabelMap[lastGameSettings.subject]}, ${languageLabel}`;
   }, [lastGameSettings]);
 
   const handleQuickPlay = () => {
@@ -208,87 +195,22 @@ export const GameMenu: React.FC<GameMenuProps> = ({ onSelectSubject, onSelectNav
           </button>
         )}
 
-        <div className="w-full grid grid-cols-2 gap-3">
-          <button
-            onClick={() => onSelectSubject('math')}
-            className="bg-gradient-to-br from-teal-500 to-teal-600 text-white rounded-2xl py-5 px-4 text-left shadow-md hover:shadow-lg hover:scale-105 transition-all duration-200"
-          >
-            <div className="text-3xl mb-2">🔢</div>
-            <h2 className="text-base font-bold leading-tight">Mathematics</h2>
-            <p className="text-xs font-medium text-teal-100 mt-1.5">Algebra & More</p>
-          </button>
-
-          <button
-            onClick={() => onSelectSubject('logic')}
-            className="bg-gradient-to-br from-purple-500 to-purple-600 text-white rounded-2xl py-5 px-4 text-left shadow-md hover:shadow-lg hover:scale-105 transition-all duration-200"
-          >
-            <div className="text-3xl mb-2">🧠</div>
-            <h2 className="text-base font-bold leading-tight">Logic & IQ</h2>
-            <p className="text-xs font-medium text-purple-100 mt-1.5">Patterns & Puzzles</p>
-          </button>
-
-          <button
-            onClick={() => onSelectSubject('english')}
-            className="bg-gradient-to-br from-amber-500 to-amber-600 text-white rounded-2xl py-5 px-4 text-left shadow-md hover:shadow-lg hover:scale-105 transition-all duration-200"
-          >
-            <div className="text-3xl mb-2">📚</div>
-            <h2 className="text-base font-bold leading-tight">English</h2>
-            <p className="text-xs font-medium text-amber-100 mt-1.5">Grammar & Reading</p>
-          </button>
-
-          <button
-            onClick={() => onSelectSubject('physics')}
-            className="bg-gradient-to-br from-indigo-500 to-indigo-600 text-white rounded-2xl py-5 px-4 text-left shadow-md hover:shadow-lg hover:scale-105 transition-all duration-200"
-          >
-            <div className="text-3xl mb-2">⚛️</div>
-            <h2 className="text-base font-bold leading-tight">Physics</h2>
-            <p className="text-xs font-medium text-indigo-100 mt-1.5">Mechanics & Energy</p>
-          </button>
-
-          <button
-            onClick={() => onSelectSubject('chemistry')}
-            className="bg-gradient-to-br from-green-500 to-green-600 text-white rounded-2xl py-5 px-4 text-left shadow-md hover:shadow-lg hover:scale-105 transition-all duration-200"
-          >
-            <div className="text-3xl mb-2">🧪</div>
-            <h2 className="text-base font-bold leading-tight">Chemistry</h2>
-            <p className="text-xs font-medium text-green-100 mt-1.5">Elements & Reactions</p>
-          </button>
-
-          <button
-            onClick={() => onSelectSubject('biology')}
-            className="bg-gradient-to-br from-teal-400 to-teal-500 text-white rounded-2xl py-5 px-4 text-left shadow-md hover:shadow-lg hover:scale-105 transition-all duration-200"
-          >
-            <div className="text-3xl mb-2">🧬</div>
-            <h2 className="text-base font-bold leading-tight">Biology</h2>
-            <p className="text-xs font-medium text-teal-100 mt-1.5">Life Science & Cells</p>
-          </button>
-
-          <button
-            onClick={() => onSelectSubject('geography')}
-            className="bg-gradient-to-br from-cyan-500 to-cyan-600 text-white rounded-2xl py-5 px-4 text-left shadow-md hover:shadow-lg hover:scale-105 transition-all duration-200"
-          >
-            <div className="text-3xl mb-2">🌍</div>
-            <h2 className="text-base font-bold leading-tight">Geography</h2>
-            <p className="text-xs font-medium text-cyan-100 mt-1.5">Earth & Maps</p>
-          </button>
-
-          <button
-            onClick={() => onSelectSubject('history')}
-            className="bg-gradient-to-br from-rose-500 to-rose-600 text-white rounded-2xl py-5 px-4 text-left shadow-md hover:shadow-lg hover:scale-105 transition-all duration-200"
-          >
-            <div className="text-3xl mb-2">📜</div>
-            <h2 className="text-base font-bold leading-tight">History</h2>
-            <p className="text-xs font-medium text-rose-100 mt-1.5">World & Kazakhstan</p>
-          </button>
-
-          <button
-            onClick={() => onSelectSubject('informatics')}
-            className="bg-gradient-to-br from-slate-500 to-slate-600 text-white rounded-2xl py-5 px-4 text-left shadow-md hover:shadow-lg hover:scale-105 transition-all duration-200"
-          >
-            <div className="text-3xl mb-2">💻</div>
-            <h2 className="text-base font-bold leading-tight">Informatics</h2>
-            <p className="text-xs font-medium text-slate-100 mt-1.5">Algorithms & Coding</p>
-          </button>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          {[
+            { key: 'mathematics', title: 'Mathematics' },
+            { key: 'natural_sciences', title: 'Natural Sciences' },
+            { key: 'english_language', title: 'English Language' },
+            { key: 'quantitative_aptitude', title: 'Quantitative Aptitude' },
+          ].map((item) => (
+            <button
+              key={item.key}
+              onClick={() => onSelectSubject(item.key as Subject)}
+              className="relative w-full bg-orange-500 hover:bg-orange-600 text-white rounded-2xl px-4 py-5 text-left shadow-md hover:shadow-lg hover:scale-105 transition-all duration-200 min-h-[130px]"
+            >
+              <span className="absolute top-2 right-2 text-[11px] font-bold bg-white text-orange-600 rounded-full px-2 py-0.5">NIL</span>
+              <h2 className="text-lg font-bold leading-tight">{item.title}</h2>
+            </button>
+          ))}
         </div>
       </div>
 

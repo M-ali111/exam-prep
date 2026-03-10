@@ -7,17 +7,50 @@ const router = Router();
 // Signup
 router.post('/signup', async (req: Request, res: Response) => {
   try {
-    const { email, username, password } = req.body;
+    const { email, username, password, schoolName, city, centerName } = req.body;
 
-    if (!email || !username || !password) {
-      return res.status(400).json({ error: 'Missing required fields: email, username, password' });
+    if (!email || !username || !password || !schoolName || !city || !centerName) {
+      return res.status(400).json({
+        error: 'Missing required fields: username, email, password, schoolName, city, centerName',
+      });
     }
     
-    if (typeof email !== 'string' || typeof username !== 'string' || typeof password !== 'string') {
-      return res.status(400).json({ error: 'Invalid field types: email, username, password must be strings' });
+    if (
+      typeof email !== 'string' ||
+      typeof username !== 'string' ||
+      typeof password !== 'string' ||
+      typeof schoolName !== 'string' ||
+      typeof city !== 'string' ||
+      typeof centerName !== 'string'
+    ) {
+      return res.status(400).json({
+        error: 'Invalid field types: username, email, password, schoolName, city, centerName must be strings',
+      });
     }
 
-    const result = await authService.signup(email, username, password);
+    const normalized = {
+      email: email.trim(),
+      username: username.trim(),
+      password,
+      schoolName: schoolName.trim(),
+      city: city.trim(),
+      centerName: centerName.trim(),
+    };
+
+    if (!normalized.email || !normalized.username || !normalized.password.trim() || !normalized.schoolName || !normalized.city || !normalized.centerName) {
+      return res.status(400).json({
+        error: 'All signup fields are required and cannot be empty',
+      });
+    }
+
+    const result = await authService.signup(
+      normalized.email,
+      normalized.username,
+      normalized.password,
+      normalized.schoolName,
+      normalized.city,
+      normalized.centerName
+    );
     res.json(result);
   } catch (error: any) {
     res.status(400).json({ error: error.message });

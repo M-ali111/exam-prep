@@ -11,6 +11,7 @@ interface Question {
   difficulty: number;
   explanation?: string | null;
   subject?: string;
+  passage?: string | null;
 }
 
 interface SoloGameProps {
@@ -86,13 +87,25 @@ export const SoloGame: React.FC<SoloGameProps> = ({ onBack }) => {
   // Calculate derived values at top level (before any conditional returns)
   const currentQuestion = questions[currentIndex];
   const subjectLabel = subject
-    ? {
+    ? ({
         mathematics: 'Mathematics',
         natural_sciences: 'Natural Sciences',
         english_language: 'English Language',
         quantitative_aptitude: 'Quantitative Aptitude',
-      }[subject]
+        bil_mathematics_logic: 'BIL Mathematics & Logic',
+        bil_kazakh_language: 'BIL Kazakh Language',
+        bil_history_kazakhstan: 'BIL History of Kazakhstan',
+        ielts_reading: 'IELTS Reading',
+        ielts_writing_skills: 'IELTS Writing Skills',
+        ielts_vocabulary: 'IELTS Vocabulary',
+        unt_reading_literacy: 'UNT Reading Literacy',
+        unt_math_literacy: 'UNT Math Literacy',
+        unt_history_kazakhstan: 'UNT History of Kazakhstan',
+        unt_profile_math: 'UNT Profile Mathematics',
+        unt_profile_physics: 'UNT Profile Physics',
+      } as Record<string, string>)[subject] ?? subject
     : 'General';
+  const isIelts = subject === 'ielts_reading' || subject === 'ielts_writing_skills' || subject === 'ielts_vocabulary';
   const progressPercent = ((currentIndex + 1) / questions.length) * 100;
   const timerColor = visualTimeLeft > 20 ? '#22c55e' : visualTimeLeft > 10 ? '#f59e0b' : '#ef4444';
   const timerStrokeDashoffset = useMemo(() => {
@@ -248,10 +261,22 @@ export const SoloGame: React.FC<SoloGameProps> = ({ onBack }) => {
     const totalAnswers = gameResult.totalAnswers || 10;
     const correctAnswers = gameResult.correctAnswers || 0;
     const wrongAnswers = Math.max(0, totalAnswers - correctAnswers);
-    const scoreColor = percentage >= 70 ? 'text-green-500' : percentage >= 50 ? 'text-amber-500' : 'text-red-500';
-    const ringColor = percentage >= 70 ? '#22c55e' : percentage >= 50 ? '#f59e0b' : '#ef4444';
-    const emoji = percentage >= 90 ? '🎉' : percentage >= 70 ? '😊' : percentage >= 50 ? '💪' : '📚';
-    const title = percentage >= 90 ? 'Outstanding! 🌟' : percentage >= 70 ? 'Great Job! 👏' : percentage >= 50 ? 'Good Effort! 💪' : 'Keep Practicing! 📚';
+
+    // IELTS band score: scale 0-100% → band 1-9
+    const bandScore = isIelts ? Math.max(1, Math.min(9, Math.round(1 + (percentage / 100) * 8))) : null;
+    const bandColor = bandScore !== null
+      ? bandScore >= 7 ? 'text-green-500' : bandScore >= 5 ? 'text-amber-500' : 'text-red-500'
+      : percentage >= 70 ? 'text-green-500' : percentage >= 50 ? 'text-amber-500' : 'text-red-500';
+    const scoreColor = bandColor;
+    const ringColor = bandScore !== null
+      ? bandScore >= 7 ? '#22c55e' : bandScore >= 5 ? '#f59e0b' : '#ef4444'
+      : percentage >= 70 ? '#22c55e' : percentage >= 50 ? '#f59e0b' : '#ef4444';
+    const emoji = bandScore !== null
+      ? bandScore >= 8 ? '🎉' : bandScore >= 6 ? '😊' : bandScore >= 5 ? '💪' : '📚'
+      : percentage >= 90 ? '🎉' : percentage >= 70 ? '😊' : percentage >= 50 ? '💪' : '📚';
+    const title = bandScore !== null
+      ? bandScore >= 8 ? 'Excellent Band! 🌟' : bandScore >= 6 ? 'Good Band! 👏' : bandScore >= 5 ? 'Keep Practicing! 💪' : 'Needs Work 📚'
+      : percentage >= 90 ? 'Outstanding! 🌟' : percentage >= 70 ? 'Great Job! 👏' : percentage >= 50 ? 'Good Effort! 💪' : 'Keep Practicing! 📚';
     const totalXp = correctAnswers * 10;
 
     const ringStyle = {
@@ -268,9 +293,17 @@ export const SoloGame: React.FC<SoloGameProps> = ({ onBack }) => {
 
           <div className="bg-white rounded-2xl shadow-md p-6 flex items-center justify-center hover:shadow-lg transition-shadow duration-200">
             <div className="w-44 h-44 rounded-full p-2" style={ringStyle}>
-              <div className="w-full h-full rounded-full bg-white flex items-center justify-center">
-                <span className={`text-4xl font-bold ${scoreColor}`}>{percentage}%</span>
-              </div>
+                <div className="w-full h-full rounded-full bg-white flex flex-col items-center justify-center">
+                  {bandScore !== null ? (
+                    <>
+                      <span className="text-xs font-bold text-gray-400 uppercase">Band</span>
+                      <span className={`text-5xl font-bold ${scoreColor}`}>{bandScore}</span>
+                      <span className="text-xs text-gray-400">{percentage}% correct</span>
+                    </>
+                  ) : (
+                    <span className={`text-4xl font-bold ${scoreColor}`}>{percentage}%</span>
+                  )}
+                </div>
             </div>
           </div>
 
@@ -396,6 +429,17 @@ export const SoloGame: React.FC<SoloGameProps> = ({ onBack }) => {
       <div className="flex-1 px-4 py-6 max-w-md mx-auto w-full space-y-4">
         {currentQuestion && (
           <>
+            {currentQuestion.passage && (
+              <div className="bg-emerald-50 border border-emerald-200 rounded-2xl shadow-md overflow-hidden">
+                <div className="flex items-center justify-between px-4 py-3 bg-emerald-600 text-white">
+                  <span className="font-bold text-sm tracking-wide">📄 Reading Passage</span>
+                  <span className="text-xs opacity-80">Questions are based on this text</span>
+                </div>
+                <div className="px-4 py-4 max-h-56 overflow-y-auto text-sm text-gray-800 leading-relaxed whitespace-pre-wrap">
+                  {currentQuestion.passage}
+                </div>
+              </div>
+            )}
             <div className="bg-white rounded-2xl shadow-md p-5 text-center border-t-4 border-teal-500">
               <span className="inline-flex px-3 py-1 rounded-full text-sm text-white font-bold mb-4 bg-teal-500">
                 🎯 Exam Prep

@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useApi } from '../utils/api';
+import { KAZAKHSTAN_CITIES, getSchoolsByCity } from '../utils/kazakhstanSchools';
 
 interface LeaderboardEntry {
   rank: number;
   id: string;
   username: string;
+  schoolName: string;
+  city: string;
+  centerName: string;
   totalMultiplayerWins: number;
   totalMultiplayerGames: number;
 }
@@ -19,10 +23,22 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ onBack }) => {
   const { request } = useApi();
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedCity, setSelectedCity] = useState('');
+  const [selectedSchool, setSelectedSchool] = useState('');
+  const [activeCity, setActiveCity] = useState('');
+  const [activeSchool, setActiveSchool] = useState('');
+
+  const availableSchools = getSchoolsByCity(selectedCity);
+  const isFiltered = !!activeCity || !!activeSchool;
 
   const fetchLeaderboard = async () => {
     try {
-      const response = await request('/games/leaderboard/global');
+      setLoading(true);
+      const params = new URLSearchParams();
+      if (activeCity) params.set('city', activeCity);
+      if (activeSchool) params.set('schoolName', activeSchool);
+      const suffix = params.toString() ? `?${params.toString()}` : '';
+      const response = await request(`/games/leaderboard/global${suffix}`);
       setLeaderboard(response);
       setLoading(false);
     } catch (error) {
@@ -33,12 +49,24 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ onBack }) => {
 
   useEffect(() => {
     fetchLeaderboard();
-    
+
     // Auto-refresh every 60 seconds
     const interval = setInterval(fetchLeaderboard, 60000);
-    
+
     return () => clearInterval(interval);
-  }, []);
+  }, [activeCity, activeSchool]);
+
+  const applyFilters = () => {
+    setActiveCity(selectedCity);
+    setActiveSchool(selectedSchool);
+  };
+
+  const clearFilters = () => {
+    setSelectedCity('');
+    setSelectedSchool('');
+    setActiveCity('');
+    setActiveSchool('');
+  };
 
   const getMedalEmoji = (rank: number) => {
     if (rank === 1) return '👑';
@@ -79,7 +107,55 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ onBack }) => {
             </button>
           )}
           <h1 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-1">🏆 Leaderboard</h1>
-          <p className="text-base sm:text-sm text-gray-600">Based on Multiplayer Wins</p>
+          <p className="text-base sm:text-sm text-gray-600">
+            {isFiltered ? 'Filtered results' : 'Global leaderboard'}
+          </p>
+        </div>
+
+        <div className="bg-white rounded-2xl shadow-lg p-4 sm:p-5 mb-6 space-y-3">
+          <p className="text-sm font-bold text-gray-900">Filters</p>
+          <select
+            value={selectedCity}
+            onChange={(e) => {
+              setSelectedCity(e.target.value);
+              setSelectedSchool('');
+            }}
+            className="w-full px-4 py-3 border border-gray-300 rounded-xl bg-white text-sm focus:outline-none focus:ring-2 focus:ring-cyan-400"
+          >
+            <option value="">All cities</option>
+            {KAZAKHSTAN_CITIES.map((city) => (
+              <option key={city} value={city}>
+                {city}
+              </option>
+            ))}
+          </select>
+          <select
+            value={selectedSchool}
+            onChange={(e) => setSelectedSchool(e.target.value)}
+            disabled={!selectedCity}
+            className="w-full px-4 py-3 border border-gray-300 rounded-xl bg-white text-sm focus:outline-none focus:ring-2 focus:ring-cyan-400 disabled:bg-gray-100 disabled:text-gray-400"
+          >
+            <option value="">All schools</option>
+            {availableSchools.map((school) => (
+              <option key={school} value={school}>
+                {school}
+              </option>
+            ))}
+          </select>
+          <div className="flex gap-2">
+            <button
+              onClick={applyFilters}
+              className="flex-1 bg-cyan-500 hover:bg-cyan-600 text-white font-bold py-2.5 rounded-xl text-sm"
+            >
+              Apply Filters
+            </button>
+            <button
+              onClick={clearFilters}
+              className="flex-1 border border-gray-300 text-gray-700 hover:bg-gray-50 font-semibold py-2.5 rounded-xl text-sm"
+            >
+              Show Global
+            </button>
+          </div>
         </div>
 
         {/* Top 3 Podium */}
@@ -110,6 +186,12 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ onBack }) => {
                       </div>
                       <p className="text-sm sm:text-xs text-gray-600 mt-1">
                         {entry.totalMultiplayerGames} game{entry.totalMultiplayerGames !== 1 ? 's' : ''} played
+                      </p>
+                      <p className="text-xs sm:text-[11px] text-gray-600 mt-1 truncate">
+                        {entry.schoolName}
+                      </p>
+                      <p className="text-xs sm:text-[11px] text-gray-500 truncate">
+                        {entry.city} • {entry.centerName}
                       </p>
                     </div>
 
@@ -161,6 +243,8 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ onBack }) => {
                         <p className="text-xs sm:text-sm text-gray-500 mt-0.5">
                           {entry.totalMultiplayerGames} game{entry.totalMultiplayerGames !== 1 ? 's' : ''}
                         </p>
+                        <p className="text-xs text-gray-500 truncate">{entry.schoolName}</p>
+                        <p className="text-xs text-gray-400 truncate">{entry.city} • {entry.centerName}</p>
                       </div>
 
                       {/* Wins Badge */}
@@ -184,8 +268,12 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ onBack }) => {
         {leaderboard.length === 0 && (
           <div className="text-center py-12 bg-white rounded-2xl shadow-lg">
             <div className="text-7xl sm:text-6xl mb-4">🏆</div>
-            <h3 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-2">No Players Yet</h3>
-            <p className="text-gray-600 text-base">Be the first to play and top the leaderboard!</p>
+            <h3 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-2">No Players Found</h3>
+            <p className="text-gray-600 text-base">
+              {isFiltered
+                ? 'No players match this filter. Try another city/school or click Show Global.'
+                : 'Be the first to play and top the global leaderboard!'}
+            </p>
           </div>
         )}
       </div>

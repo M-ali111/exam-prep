@@ -12,9 +12,20 @@ function parseLanguage(value: unknown): 'english' | 'russian' | 'kazakh' {
   throw new Error('Invalid language option.');
 }
 
-function parseSubject(value: unknown): 'mathematics' | 'natural_sciences' | 'english_language' | 'quantitative_aptitude' {
-  if (value === 'mathematics' || value === 'natural_sciences' || value === 'english_language' || value === 'quantitative_aptitude') {
-    return value;
+type AllSubject = 'mathematics' | 'natural_sciences' | 'english_language' | 'quantitative_aptitude' | 'bil_mathematics_logic' | 'bil_kazakh_language' | 'bil_history_kazakhstan' | 'ielts_reading' | 'ielts_writing_skills' | 'ielts_vocabulary' | 'unt_reading_literacy' | 'unt_math_literacy' | 'unt_history_kazakhstan' | 'unt_profile_math' | 'unt_profile_physics';
+function parseSubject(value: unknown): AllSubject {
+  if (
+    value === 'mathematics' || value === 'natural_sciences' ||
+    value === 'english_language' || value === 'quantitative_aptitude' ||
+    value === 'bil_mathematics_logic' || value === 'bil_kazakh_language' ||
+    value === 'bil_history_kazakhstan' ||
+    value === 'ielts_reading' || value === 'ielts_writing_skills' ||
+    value === 'ielts_vocabulary' ||
+    value === 'unt_reading_literacy' || value === 'unt_math_literacy' ||
+    value === 'unt_history_kazakhstan' || value === 'unt_profile_math' ||
+    value === 'unt_profile_physics'
+  ) {
+    return value as AllSubject;
   }
   throw new Error('Invalid subject option.');
 }
@@ -125,7 +136,9 @@ router.get('/:gameId', authMiddleware, async (req: Request, res: Response) => {
 router.get('/leaderboard/global', async (req: Request, res: Response) => {
   try {
     const limit = req.query.limit ? parseInt(req.query.limit as string) : 50;
-    const leaderboard = await gameService.getLeaderboard(limit);
+    const city = typeof req.query.city === 'string' ? req.query.city : undefined;
+    const schoolName = typeof req.query.schoolName === 'string' ? req.query.schoolName : undefined;
+    const leaderboard = await gameService.getLeaderboard(limit, { city, schoolName });
     res.json(leaderboard);
   } catch (error: any) {
     res.status(400).json({ error: error.message });

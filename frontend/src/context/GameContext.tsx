@@ -1,6 +1,21 @@
 import React, { createContext, useContext, useMemo, useState, useCallback, ReactNode } from 'react';
 
-export type Subject = 'mathematics' | 'natural_sciences' | 'english_language' | 'quantitative_aptitude';
+export type Subject =
+  | 'mathematics'
+  | 'natural_sciences'
+  | 'english_language'
+  | 'quantitative_aptitude'
+  | 'bil_mathematics_logic'
+  | 'bil_kazakh_language'
+  | 'bil_history_kazakhstan'
+  | 'ielts_reading'
+  | 'ielts_writing_skills'
+  | 'ielts_vocabulary'
+  | 'unt_reading_literacy'
+  | 'unt_math_literacy'
+  | 'unt_history_kazakhstan'
+  | 'unt_profile_math'
+  | 'unt_profile_physics';
 export type GameMode = 'solo' | 'multiplayer';
 export type GameFlowStep = 'subject' | 'mode' | 'language' | 'playing';
 export type QuestionLanguage = 'english' | 'russian' | 'kazakh';
@@ -25,7 +40,23 @@ const LANGUAGE_STORAGE_KEY = 'selectedLanguage';
 export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [subject, setSubjectState] = useState<Subject | null>(() => {
     const stored = localStorage.getItem(SUBJECT_STORAGE_KEY) as Subject | null;
-    const validSubjects: Subject[] = ['mathematics', 'natural_sciences', 'english_language', 'quantitative_aptitude'];
+    const validSubjects: Subject[] = [
+      'mathematics',
+      'natural_sciences',
+      'english_language',
+      'quantitative_aptitude',
+      'bil_mathematics_logic',
+      'bil_kazakh_language',
+      'bil_history_kazakhstan',
+      'ielts_reading',
+      'ielts_writing_skills',
+      'ielts_vocabulary',
+      'unt_reading_literacy',
+      'unt_math_literacy',
+      'unt_history_kazakhstan',
+      'unt_profile_math',
+      'unt_profile_physics',
+    ];
     return stored && validSubjects.includes(stored) ? stored : null;
   });
   const [selectedMode, setSelectedMode] = useState<GameMode | null>(null);

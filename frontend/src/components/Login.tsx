@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { KAZAKHSTAN_CITIES, getSchoolsByCity } from '../utils/kazakhstanSchools';
 
 export const Login: React.FC<{ onLoginSuccess: () => void }> = ({ onLoginSuccess }) => {
   const [email, setEmail] = useState('');
@@ -11,6 +12,7 @@ export const Login: React.FC<{ onLoginSuccess: () => void }> = ({ onLoginSuccess
   const [city, setCity] = useState('');
   const [centerName, setCenterName] = useState('');
   const { login, signup } = useAuth();
+  const availableSchools = getSchoolsByCity(city);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,22 +51,36 @@ export const Login: React.FC<{ onLoginSuccess: () => void }> = ({ onLoginSuccess
                 className="px-4 py-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-400 text-base"
                 required
               />
-              <input
-                type="text"
-                placeholder="School name"
+              <select
+                value={city}
+                onChange={(e) => {
+                  setCity(e.target.value);
+                  setSchoolName('');
+                }}
+                className="px-4 py-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-400 text-base bg-white"
+                required
+              >
+                <option value="">Select city</option>
+                {KAZAKHSTAN_CITIES.map((cityOption) => (
+                  <option key={cityOption} value={cityOption}>
+                    {cityOption}
+                  </option>
+                ))}
+              </select>
+              <select
                 value={schoolName}
                 onChange={(e) => setSchoolName(e.target.value)}
-                className="px-4 py-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-400 text-base"
+                className="px-4 py-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-400 text-base bg-white disabled:bg-gray-100 disabled:text-gray-400"
                 required
-              />
-              <input
-                type="text"
-                placeholder="City"
-                value={city}
-                onChange={(e) => setCity(e.target.value)}
-                className="px-4 py-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-400 text-base"
-                required
-              />
+                disabled={!city}
+              >
+                <option value="">Select school</option>
+                {availableSchools.map((schoolOption) => (
+                  <option key={schoolOption} value={schoolOption}>
+                    {schoolOption}
+                  </option>
+                ))}
+              </select>
               <input
                 type="text"
                 placeholder="Center name"

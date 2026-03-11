@@ -81,6 +81,17 @@ export const GameMenu: React.FC<GameMenuProps> = ({ onSelectSubject, onSelectNav
       natural_sciences: 'Natural Sciences',
       english_language: 'English Language',
       quantitative_aptitude: 'Quantitative Aptitude',
+      bil_mathematics_logic: 'BIL Mathematics & Logic',
+      bil_kazakh_language: 'BIL Kazakh Language',
+      bil_history_kazakhstan: 'BIL History of Kazakhstan',
+      ielts_reading: 'IELTS Reading',
+      ielts_writing_skills: 'IELTS Writing Skills',
+      ielts_vocabulary: 'IELTS Vocabulary',
+      unt_reading_literacy: 'UNT Reading Literacy',
+      unt_math_literacy: 'UNT Math Literacy',
+      unt_history_kazakhstan: 'UNT History of Kazakhstan',
+      unt_profile_math: 'UNT Profile Mathematics',
+      unt_profile_physics: 'UNT Profile Physics',
     };
     return `⚡ Quick Play — ${subjectLabelMap[lastGameSettings.subject]}, ${languageLabel}`;
   }, [lastGameSettings]);
@@ -103,6 +114,9 @@ export const GameMenu: React.FC<GameMenuProps> = ({ onSelectSubject, onSelectNav
 
         <ProfileScreen
           username={user?.username || 'Player'}
+          schoolName={user?.schoolName || '-'}
+          city={user?.city || '-'}
+          centerName={user?.centerName || '-'}
           data={{
             totalGames,
             currentStreak: streakData.currentStreak,
@@ -195,7 +209,8 @@ export const GameMenu: React.FC<GameMenuProps> = ({ onSelectSubject, onSelectNav
           </button>
         )}
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">NIS — Nazarbayev Intellectual Schools</p>
+        <div className="grid grid-cols-2 gap-3">
           {[
             { key: 'mathematics', title: 'Mathematics' },
             { key: 'natural_sciences', title: 'Natural Sciences' },
@@ -207,8 +222,67 @@ export const GameMenu: React.FC<GameMenuProps> = ({ onSelectSubject, onSelectNav
               onClick={() => onSelectSubject(item.key as Subject)}
               className="relative w-full bg-orange-500 hover:bg-orange-600 text-white rounded-2xl px-4 py-5 text-left shadow-md hover:shadow-lg hover:scale-105 transition-all duration-200 min-h-[130px]"
             >
-              <span className="absolute top-2 right-2 text-[11px] font-bold bg-white text-orange-600 rounded-full px-2 py-0.5">NIL</span>
+              <span className="absolute top-2 right-2 text-[11px] font-bold bg-white text-orange-600 rounded-full px-2 py-0.5">NIS</span>
               <h2 className="text-lg font-bold leading-tight">{item.title}</h2>
+            </button>
+          ))}
+        </div>
+
+        <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">BIL — Bilim-Innovation Lyceum</p>
+        <div className="grid grid-cols-2 gap-3">
+          {[
+            { key: 'bil_mathematics_logic', title: 'Mathematics & Logic', sub: '55 questions' },
+            { key: 'bil_kazakh_language', title: 'Kazakh Language', sub: '10 questions' },
+            { key: 'bil_history_kazakhstan', title: 'History of Kazakhstan', sub: '10 questions' },
+          ].map((item) => (
+            <button
+              key={item.key}
+              onClick={() => onSelectSubject(item.key as Subject)}
+              className="relative w-full bg-blue-600 hover:bg-blue-700 text-white rounded-2xl px-4 py-5 text-left shadow-md hover:shadow-lg hover:scale-105 transition-all duration-200 min-h-[130px]"
+            >
+              <span className="absolute top-2 right-2 text-[11px] font-bold bg-white text-blue-600 rounded-full px-2 py-0.5">BIL</span>
+              <h2 className="text-lg font-bold leading-tight">{item.title}</h2>
+              <p className="text-xs text-blue-200 mt-1">{item.sub}</p>
+            </button>
+          ))}
+        </div>
+
+        <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">IELTS — International English Language Testing</p>
+        <div className="grid grid-cols-2 gap-3">
+          {[
+            { key: 'ielts_reading', title: '📖 Reading', sub: 'Passage-based MCQ' },
+            { key: 'ielts_writing_skills', title: '✍️ Writing Skills', sub: 'Grammar & structure' },
+            { key: 'ielts_vocabulary', title: '🎓 Vocabulary', sub: 'Word-in-context' },
+          ].map((item) => (
+            <button
+              key={item.key}
+              onClick={() => onSelectSubject(item.key as Subject)}
+              className="relative w-full bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl px-4 py-5 text-left shadow-md hover:shadow-lg hover:scale-105 transition-all duration-200 min-h-[130px]"
+            >
+              <span className="absolute top-2 right-2 text-[11px] font-bold bg-white text-emerald-600 rounded-full px-2 py-0.5">IELTS</span>
+              <h2 className="text-lg font-bold leading-tight">{item.title}</h2>
+              <p className="text-xs text-emerald-200 mt-1">{item.sub}</p>
+            </button>
+          ))}
+        </div>
+
+        <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">UNT — Unified National Testing (Kazakhstan)</p>
+        <div className="grid grid-cols-2 gap-3">
+          {[
+            { key: 'unt_reading_literacy', title: 'Reading Literacy', sub: 'UNT core section' },
+            { key: 'unt_math_literacy', title: 'Math Literacy', sub: 'UNT core section' },
+            { key: 'unt_history_kazakhstan', title: 'History of Kazakhstan', sub: 'UNT core section' },
+            { key: 'unt_profile_math', title: 'Profile Mathematics', sub: 'UNT profile subject' },
+            { key: 'unt_profile_physics', title: 'Profile Physics', sub: 'UNT profile subject' },
+          ].map((item) => (
+            <button
+              key={item.key}
+              onClick={() => onSelectSubject(item.key as Subject)}
+              className="relative w-full bg-gray-600 hover:bg-gray-700 text-white rounded-2xl px-4 py-5 text-left shadow-md hover:shadow-lg hover:scale-105 transition-all duration-200 min-h-[130px]"
+            >
+              <span className="absolute top-2 right-2 text-[11px] font-bold bg-white text-gray-700 rounded-full px-2 py-0.5">UNT</span>
+              <h2 className="text-lg font-bold leading-tight">{item.title}</h2>
+              <p className="text-xs text-gray-200 mt-1">{item.sub}</p>
             </button>
           ))}
         </div>

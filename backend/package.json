@@ -4,7 +4,7 @@
   "description": "Backend for Exam prep",
   "main": "dist/index.js",
   "scripts": {
-    "dev": "ts-node src/index.ts",
+    "dev": "kill-port 5050 && ts-node src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
     "prisma:migrate": "prisma migrate dev",
@@ -32,6 +32,7 @@
     "typescript": "^5.3.3"
   },
   "devDependencies": {
+    "kill-port": "^2.0.1"
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"

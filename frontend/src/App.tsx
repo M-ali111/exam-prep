@@ -5,7 +5,7 @@ import { Login } from './components/Login';
 import { GameMenu } from './components/GameMenu';
 import { ModeSelection } from './components/ModeSelection';
 import { SoloGame } from './components/SoloGame';
-import { MultiplayerGame } from './components/MultiplayerGame';
+import { MultiplayerGame } from './components/MultiplayerGame.tsx';
 import { Stats } from './components/Stats';
 import Leaderboard from './components/Leaderboard';
 import { OnboardingScreen } from './components/OnboardingScreen';
@@ -44,7 +44,7 @@ const AppContent: React.FC = () => {
     setAppState('login');
   };
 
-  const handleSelectSubject = (subject: 'mathematics' | 'natural_sciences' | 'english_language' | 'quantitative_aptitude') => {
+  const handleSelectSubject = (subject: Subject) => {
     setSubject(subject);
     setAppState('mode-selection');
   };

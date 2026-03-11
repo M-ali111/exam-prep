@@ -14,7 +14,7 @@ export const useGameSocket = () => {
       return;
     }
 
-    const socketUrl = import.meta.env.VITE_SOCKET_URL || 'http://localhost:5001';
+    const socketUrl = import.meta.env.VITE_SOCKET_URL || 'http://localhost:5050';
     
     const newSocket = io(socketUrl, {
       auth: {

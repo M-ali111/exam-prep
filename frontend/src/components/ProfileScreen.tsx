@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 
 interface ProfileData {
   totalGames: number;
@@ -12,6 +12,9 @@ interface ProfileData {
 
 interface ProfileScreenProps {
   username: string;
+  schoolName: string;
+  city: string;
+  centerName: string;
   data: ProfileData;
   onLogout: () => void;
 }
@@ -24,7 +27,7 @@ const getInitials = (username: string) =>
     .slice(0, 2)
     .join('') || 'U';
 
-export const ProfileScreen: React.FC<ProfileScreenProps> = ({ username, data, onLogout }) => {
+export const ProfileScreen: React.FC<ProfileScreenProps> = ({ username, schoolName, city, centerName, data, onLogout }) => {
   const badges = [
     { icon: '🎯', title: 'First Game', unlocked: data.totalGames >= 1 },
     { icon: '🧠', title: 'Logic Master', unlocked: data.logicAccuracy > 70 },
@@ -47,6 +50,11 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({ username, data, on
           {getInitials(username)}
         </div>
         <h2 className="text-2xl font-bold text-gray-900">{username}</h2>
+        <div className="mt-4 grid gap-2 text-sm text-gray-600">
+          <p><span className="font-semibold text-gray-900">School:</span> {schoolName}</p>
+          <p><span className="font-semibold text-gray-900">City:</span> {city}</p>
+          <p><span className="font-semibold text-gray-900">Center:</span> {centerName}</p>
+        </div>
       </div>
 
       <div className="bg-white shadow-md rounded-2xl p-4 hover:shadow-lg transition-shadow duration-200">

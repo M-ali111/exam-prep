@@ -5,7 +5,7 @@ import { generateNisBilQuestions, NisBilDifficulty, NisBilQuestion, QuestionLang
 import { recordGameForDay, updateStreakStatus } from './streak';
 
 const prisma = new PrismaClient();
-type NilSubject = 'mathematics' | 'natural_sciences' | 'english_language' | 'quantitative_aptitude';
+type NilSubject = 'mathematics' | 'natural_sciences' | 'english_language' | 'quantitative_aptitude' | 'bil_mathematics_logic' | 'bil_kazakh_language' | 'bil_history_kazakhstan' | 'ielts_reading' | 'ielts_writing_skills' | 'ielts_vocabulary' | 'unt_reading_literacy' | 'unt_math_literacy' | 'unt_history_kazakhstan' | 'unt_profile_math' | 'unt_profile_physics';
 
 const TOPICS_BY_SUBJECT: Record<NilSubject, string[]> = {
   mathematics: [
@@ -36,6 +36,83 @@ const TOPICS_BY_SUBJECT: Record<NilSubject, string[]> = {
     'analogies',
     'data interpretation',
   ],
+  bil_mathematics_logic: [
+    'arithmetic and number theory',
+    'algebra and equations',
+    'geometry and measurement',
+    'logical sequences and patterns',
+    'word problems and reasoning',
+  ],
+  bil_kazakh_language: [
+    'Kazakh grammar and morphology',
+    'Kazakh reading comprehension',
+    'Kazakh vocabulary and synonyms',
+    'Kazakh sentence structure',
+    'Kazakh spelling and orthography',
+  ],
+  bil_history_kazakhstan: [
+    'ancient Kazakhstan civilizations',
+    'Kazakh Khanate history',
+    'Kazakhstan in the Soviet era',
+    'modern independent Kazakhstan',
+    'notable Kazakh historical figures',
+  ],
+  ielts_reading: [
+    'identifying main idea',
+    'locating specific information',
+    'understanding writer\'s opinion',
+    'matching headings to paragraphs',
+    'sentence completion from passage',
+  ],
+  ielts_writing_skills: [
+    'task 2 essay structure',
+    'coherence and cohesion',
+    'grammar and sentence variety',
+    'formal vs informal register',
+    'linking words and phrases',
+  ],
+  ielts_vocabulary: [
+    'academic word list',
+    'word in context meaning',
+    'synonyms and paraphrasing',
+    'collocations and phrases',
+    'prefix and suffix word formation',
+  ],
+  unt_reading_literacy: [
+    'main idea identification',
+    'inference and conclusion',
+    'author purpose and tone',
+    'text structure and logic',
+    'vocabulary in context',
+  ],
+  unt_math_literacy: [
+    'percentages and ratios',
+    'tables and graphs interpretation',
+    'basic probability',
+    'everyday word problems',
+    'units and conversions',
+  ],
+  unt_history_kazakhstan: [
+    'ancient tribes and states',
+    'Kazakh Khanate and khans',
+    'Russian imperial period',
+    'Soviet period in Kazakhstan',
+    'independent Kazakhstan milestones',
+  ],
+  unt_profile_math: [
+    'equations and inequalities',
+    'functions and graphs',
+    'trigonometry basics',
+    'geometry and stereometry',
+    'combinatorics and probability',
+  ],
+  unt_profile_physics: [
+    'mechanics and kinematics',
+    'electricity and circuits',
+    'waves and optics',
+    'thermodynamics',
+    'atomic and nuclear physics',
+  ],
 };
 
 function pickRandomTopic(subject: NilSubject): string {
@@ -47,6 +124,17 @@ function mapNilSubjectToAiSubject(subject: NilSubject): QuestionSubject {
   if (subject === 'mathematics') return 'math';
   if (subject === 'english_language') return 'english';
   if (subject === 'quantitative_aptitude') return 'logic';
+  if (subject === 'bil_mathematics_logic') return 'bil_math_logic';
+  if (subject === 'bil_kazakh_language') return 'kazakh';
+  if (subject === 'bil_history_kazakhstan') return 'history_kz';
+  if (subject === 'ielts_reading') return 'ielts_reading';
+  if (subject === 'ielts_writing_skills') return 'ielts_writing';
+  if (subject === 'ielts_vocabulary') return 'ielts_vocab';
+  if (subject === 'unt_reading_literacy') return 'unt_reading';
+  if (subject === 'unt_math_literacy') return 'unt_math_literacy';
+  if (subject === 'unt_history_kazakhstan') return 'unt_history_kz';
+  if (subject === 'unt_profile_math') return 'unt_profile_math';
+  if (subject === 'unt_profile_physics') return 'unt_profile_physics';
   return ['physics', 'chemistry', 'biology'][Math.floor(Math.random() * 3)] as QuestionSubject;
 }
 
@@ -228,7 +316,7 @@ export const gameService = {
       },
     });
 
-    const storedQuestions = [] as Array<{ id: string; text: string; options: string[]; difficulty: number; explanation: string | null; subject: string }>;
+    const storedQuestions = [] as Array<{ id: string; text: string; options: string[]; difficulty: number; explanation: string | null; subject: string; passage: string | null }>;
 
     const aiQuestions = await getNisBilQuestions({
       topic,
@@ -259,6 +347,7 @@ export const gameService = {
         difficulty: question.difficulty,
         explanation,
         subject: (question as { subject?: string }).subject ?? 'math',
+        passage: aiQ.passage || null,
       });
     }
 
@@ -530,13 +619,20 @@ export const gameService = {
   /**
    * Get leaderboard
    */
-  async getLeaderboard(limit: number = 100) {
+  async getLeaderboard(limit: number = 100, filters?: { city?: string; schoolName?: string }) {
+    const normalizedCity = filters?.city?.trim();
+    const normalizedSchoolName = filters?.schoolName?.trim();
+
     // Get all users who have played at least one multiplayer game
     const usersWithMultiplayerGames = await prisma.gamePlayer.findMany({
       where: {
         game: {
           gameType: 'multiplayer',
           status: 'completed'
+        },
+        user: {
+          ...(normalizedCity ? { city: normalizedCity } : {}),
+          ...(normalizedSchoolName ? { schoolName: normalizedSchoolName } : {}),
         }
       },
       select: {
@@ -561,6 +657,9 @@ export const gameService = {
       select: {
         id: true,
         username: true,
+        schoolName: true,
+        city: true,
+        centerName: true,
       },
     });
 
@@ -588,6 +687,9 @@ export const gameService = {
         return {
           id: user.id,
           username: user.username,
+          schoolName: user.schoolName,
+          city: user.city,
+          centerName: user.centerName,
           totalMultiplayerWins,
           totalMultiplayerGames
         };
@@ -605,7 +707,8 @@ export const gameService = {
       .map((entry, index) => ({
         rank: index + 1,
         ...entry
-      }));
+      }))
+      .slice(0, limit);
 
     return sortedLeaderboard;
   },

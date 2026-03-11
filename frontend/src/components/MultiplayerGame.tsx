@@ -2,9 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useApi } from '../utils/api';
 import { useGameSocket } from '../hooks/useGameSocket';
 import { useAuth } from '../context/AuthContext';
-import { useLanguage } from '../context/LanguageContext';
 import { useGame } from '../context/GameContext';
-import { translations } from '../utils/translations';
 
 interface Question {
   id: string;
@@ -47,7 +45,6 @@ export const MultiplayerGame: React.FC<MultiplayerGameProps> = ({ onBack }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [gameStatus, setGameStatus] = useState('');
   const [joinGameId, setJoinGameId] = useState('');
-  const [players, setPlayers] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [gameResult, setGameResult] = useState<any>(null);
@@ -64,9 +61,7 @@ export const MultiplayerGame: React.FC<MultiplayerGameProps> = ({ onBack }) => {
   const { request } = useApi();
   const { socket, connected } = useGameSocket();
   const { user } = useAuth();
-  const { language } = useLanguage();
   const { subject, selectedLanguage } = useGame();
-  const t = translations[language];
 
   const selectedSubjectLabel = subject ? SUBJECT_LABELS[subject] : 'Unknown Subject';
 
@@ -74,7 +69,6 @@ export const MultiplayerGame: React.FC<MultiplayerGameProps> = ({ onBack }) => {
     if (!socket || !connected) return;
 
     socket.on('player_joined', (data) => {
-      setPlayers(data.players);
       if (data.playerCount === 2) {
         setGameStatus('ready');
       }

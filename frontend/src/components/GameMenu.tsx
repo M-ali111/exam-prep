@@ -229,38 +229,46 @@ export const GameMenu: React.FC<GameMenuProps> = ({ onSelectSubject, onSelectNav
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-amber-50 overflow-y-auto animate-fade-in">
+    <div className="flex flex-col min-h-screen bg-slate-100 overflow-y-auto animate-fade-in">
       <div className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-white/50 shadow-sm px-4 py-4 text-center">
         <div className="text-xl font-bold text-gray-900">🧠 Exam - Prep</div>
-        <p className="text-lg font-bold text-gray-900 mt-2">Welcome back, {user?.username}! 👋</p>
-        {streakData.currentStreak > 0 && (
-          <p className="text-sm font-medium text-gray-600 mt-1">🔥 {streakData.currentStreak} day streak</p>
-        )}
       </div>
 
-      <div className="px-4 py-6 max-w-md mx-auto pb-24 space-y-4 w-full">
-        <div className="bg-white rounded-2xl shadow-md p-4">
-          <p className="text-sm font-bold text-gray-800 mb-3">Language</p>
-          <div className="grid grid-cols-3 gap-2">
+      {/* Hero welcome banner */}
+      <div className="bg-gradient-to-br from-cyan-500 to-teal-600 px-4 pb-6 pt-4 text-white">
+        <div className="max-w-md mx-auto">
+          <p className="text-lg font-semibold opacity-80">Good day,</p>
+          <p className="text-2xl font-bold">{user?.username} 👋</p>
+          {streakData.currentStreak > 0 && (
+            <span className="inline-flex items-center gap-1 mt-2 bg-white/20 rounded-full px-3 py-1 text-sm font-semibold">
+              🔥 {streakData.currentStreak} day streak
+            </span>
+          )}
+        </div>
+      </div>
+
+      <div className="px-4 py-4 max-w-md mx-auto pb-24 space-y-4 w-full">
+        <div className="bg-white rounded-2xl shadow-sm p-3 flex items-center gap-2">
+          <div className="flex flex-1 gap-1.5">
             {[
-              { key: 'english', label: 'English' },
-              { key: 'russian', label: 'Русский' },
-              { key: 'kazakh', label: 'Қазақша' },
+              { key: 'english', label: 'EN', flag: '🇬🇧' },
+              { key: 'russian', label: 'Рус', flag: '🇷🇺' },
+              { key: 'kazakh', label: 'Қаз', flag: '🇰🇿' },
             ].map((langOption) => (
               <button
                 key={langOption.key}
                 onClick={() => handleLanguageChange(langOption.key as QuestionLanguage)}
-                className={`rounded-xl py-2.5 text-sm font-semibold transition-colors ${
+                className={`flex-1 flex flex-col items-center gap-0.5 rounded-xl py-2 text-xs font-bold transition-all duration-200 ${
                   language === langOption.key
-                    ? 'bg-cyan-500 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    ? 'bg-cyan-500 text-white shadow-sm scale-105'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                 }`}
               >
-                {langOption.label}
+                <span className="text-base">{langOption.flag}</span>
+                <span>{langOption.label}</span>
               </button>
             ))}
           </div>
-          <p className="text-xs text-gray-500 mt-3">IELTS and English Language subjects stay in English.</p>
         </div>
 
         <div className="bg-gradient-to-r from-amber-200 via-yellow-200 to-orange-200 rounded-2xl shadow-md px-4 py-3 hover:shadow-lg transition-shadow duration-200">

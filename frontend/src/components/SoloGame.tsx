@@ -37,6 +37,7 @@ export const SoloGame: React.FC<SoloGameProps> = ({ onBack }) => {
   const [reviewOpen, setReviewOpen] = useState(false);
   const [visualTimeLeft, setVisualTimeLeft] = useState(30);
   const [animatedXp, setAnimatedXp] = useState(0);
+  const [showFeedbackPopup, setShowFeedbackPopup] = useState(false);
   const { request } = useApi();
   const { language } = useLanguage();
   const { subject, selectedLanguage } = useGame();
@@ -210,6 +211,12 @@ export const SoloGame: React.FC<SoloGameProps> = ({ onBack }) => {
       setGameResult(result);
       setGameCompleted(true);
 
+      const gamesPlayed = parseInt(localStorage.getItem('examPrepGamesPlayed') || '0') + 1;
+      localStorage.setItem('examPrepGamesPlayed', String(gamesPlayed));
+      if (gamesPlayed % 5 === 0) {
+        setShowFeedbackPopup(true);
+      }
+
       localStorage.setItem(
         'lastGameSettings',
         JSON.stringify({
@@ -285,6 +292,29 @@ export const SoloGame: React.FC<SoloGameProps> = ({ onBack }) => {
     
     return (
       <div className="flex flex-col min-h-screen bg-amber-50 items-center justify-center px-4 py-6 max-w-md mx-auto pb-24 animate-fade-in">
+        {showFeedbackPopup && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+            <div className="bg-white rounded-2xl shadow-xl p-6 max-w-sm w-full text-center space-y-4">
+              <div className="text-4xl">📝</div>
+              <h2 className="text-xl font-bold text-gray-900">Enjoying Exam Prep?</h2>
+              <p className="text-sm text-gray-600">Help us improve — it only takes a minute!</p>
+              <a
+                href="https://docs.google.com/forms/d/e/1FAIpQLSeB2OPr7cSpUyAJIDBDi140rMCbW31Jg_tMAl-Ec4Nt-hMVHA/viewform"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block w-full bg-teal-500 text-white font-bold rounded-2xl py-3 hover:bg-teal-600 transition-colors"
+              >
+                Give Feedback 🚀
+              </a>
+              <button
+                onClick={() => setShowFeedbackPopup(false)}
+                className="block w-full text-gray-400 text-sm hover:text-gray-600"
+              >
+                Maybe later
+              </button>
+            </div>
+          </div>
+        )}
         <div className="w-full space-y-4">
           <div className="bg-white rounded-2xl shadow-md p-6 text-center hover:shadow-lg transition-shadow duration-200">
             <div className={`text-6xl mb-2 ${percentage >= 90 ? 'animate-confetti' : ''}`}>{emoji}</div>

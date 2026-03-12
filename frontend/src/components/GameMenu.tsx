@@ -91,6 +91,8 @@ export const GameMenu: React.FC<GameMenuProps> = ({ onSelectSubject, onSelectNav
     mode: 'solo';
   } | null>(null);
 
+  const [showFeedbackBanner, setShowFeedbackBanner] = useState(() => localStorage.getItem('examPrepFeedbackBannerDismissed') !== 'true');
+
   const totalGames = (user as any)?.totalGamesPlayed || 0;
   const totalWins = (user as any)?.totalWins || 0;
   const winRate = totalGames > 0 ? Math.round((totalWins / totalGames) * 100) : 0;
@@ -294,8 +296,36 @@ export const GameMenu: React.FC<GameMenuProps> = ({ onSelectSubject, onSelectNav
           </button>
         )}
 
-        <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">NIS — Nazarbayev Intellectual Schools</p>
-        <div className="grid grid-cols-3 gap-3">
+        {showFeedbackBanner && (
+          <div className="bg-gradient-to-r from-teal-50 to-cyan-50 border border-teal-200 rounded-2xl p-4 flex items-center justify-between shadow-sm">
+            <div className="flex items-center gap-3">
+              <span className="text-2xl">📝</span>
+              <div>
+                <p className="font-bold text-gray-900 text-sm">Enjoying the app?</p>
+                <a
+                  href="https://docs.google.com/forms/d/e/1FAIpQLSeB2OPr7cSpUyAJIDBDi140rMCbW31Jg_tMAl-Ec4Nt-hMVHA/viewform"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-teal-600 text-xs font-semibold underline"
+                >
+                  Let us know! 📝 →
+                </a>
+              </div>
+            </div>
+            <button
+              onClick={() => {
+                localStorage.setItem('examPrepFeedbackBannerDismissed', 'true');
+                setShowFeedbackBanner(false);
+              }}
+              className="text-gray-400 hover:text-gray-600 text-xl font-bold ml-2"
+            >
+              ×
+            </button>
+          </div>
+        )}
+
+        <p className="text-[10px] sm:text-xs font-bold text-gray-500 uppercase tracking-wider">NIS — Nazarbayev Intellectual Schools</p>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
           {[
             { key: 'mathematics', title: activeSubjectLabels.mathematics },
             { key: 'natural_sciences', title: activeSubjectLabels.natural_sciences },
@@ -305,35 +335,35 @@ export const GameMenu: React.FC<GameMenuProps> = ({ onSelectSubject, onSelectNav
             <button
               key={item.key}
               onClick={() => onSelectSubject(item.key as Subject)}
-              className="relative w-full bg-orange-500 hover:bg-orange-600 text-white rounded-2xl px-4 py-5 text-left shadow-md hover:shadow-lg hover:scale-105 transition-all duration-200 min-h-[130px]"
+              className="relative w-full bg-orange-500 hover:bg-orange-600 text-white rounded-2xl p-2 sm:p-3 md:p-4 text-left shadow-md hover:shadow-lg hover:scale-105 transition-all duration-200 min-h-[90px] sm:min-h-[110px] md:min-h-[130px]"
             >
-              <span className="absolute top-2 right-2 text-[11px] font-bold bg-white text-orange-600 rounded-full px-2 py-0.5">NIS</span>
-              <h2 className="text-lg font-bold leading-tight">{item.title}</h2>
+              <span className="absolute top-2 right-2 text-[9px] sm:text-[11px] font-bold bg-white text-orange-600 rounded-full px-1.5 sm:px-2 py-0.5">NIS</span>
+              <h2 className="text-xs sm:text-sm font-bold leading-tight mt-4">{item.title}</h2>
             </button>
           ))}
         </div>
 
-        <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">BIL — Bilim-Innovation Lyceum</p>
-        <div className="grid grid-cols-3 gap-3">
+        <p className="text-[10px] sm:text-xs font-bold text-gray-500 uppercase tracking-wider">BIL — Bilim-Innovation Lyceum</p>
+        <div className="grid grid-cols-3 gap-2 sm:gap-3">
           {[
-            { key: 'bil_mathematics_logic', title: activeSubjectLabels.bil_mathematics_logic, sub: '55 questions' },
-            { key: 'bil_kazakh_language', title: activeSubjectLabels.bil_kazakh_language, sub: '10 questions' },
-            { key: 'bil_history_kazakhstan', title: activeSubjectLabels.bil_history_kazakhstan, sub: '10 questions' },
+            { key: 'bil_mathematics_logic', title: activeSubjectLabels.bil_mathematics_logic.replace('BIL ', ''), sub: '55 questions' },
+            { key: 'bil_kazakh_language', title: activeSubjectLabels.bil_kazakh_language.replace('BIL ', ''), sub: '10 questions' },
+            { key: 'bil_history_kazakhstan', title: activeSubjectLabels.bil_history_kazakhstan.replace('BIL ', ''), sub: '10 questions' },
           ].map((item) => (
             <button
               key={item.key}
               onClick={() => onSelectSubject(item.key as Subject)}
-              className="relative w-full bg-blue-600 hover:bg-blue-700 text-white rounded-2xl px-4 py-5 text-left shadow-md hover:shadow-lg hover:scale-105 transition-all duration-200 min-h-[130px]"
+              className="relative w-full bg-blue-600 hover:bg-blue-700 text-white rounded-2xl p-2 sm:p-3 md:p-4 text-left shadow-md hover:shadow-lg hover:scale-105 transition-all duration-200 min-h-[90px] sm:min-h-[110px] md:min-h-[130px]"
             >
-              <span className="absolute top-2 right-2 text-[11px] font-bold bg-white text-blue-600 rounded-full px-2 py-0.5">BIL</span>
-              <h2 className="text-lg font-bold leading-tight">{item.title}</h2>
-              <p className="text-xs text-blue-200 mt-1">{item.sub}</p>
+              <span className="absolute top-2 right-2 text-[9px] sm:text-[11px] font-bold bg-white text-blue-600 rounded-full px-1.5 sm:px-2 py-0.5">BIL</span>
+              <h2 className="text-xs sm:text-sm font-bold leading-tight mt-4">{item.title}</h2>
+              <p className="text-[10px] sm:text-xs text-blue-200 mt-1">{item.sub}</p>
             </button>
           ))}
         </div>
 
-        <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">IELTS — International English Language Testing</p>
-        <div className="grid grid-cols-3 gap-3">
+        <p className="text-[10px] sm:text-xs font-bold text-gray-500 uppercase tracking-wider">IELTS — International English Language Testing</p>
+        <div className="grid grid-cols-3 gap-2 sm:gap-3">
           {[
             { key: 'ielts_reading', title: `📖 ${activeSubjectLabels.ielts_reading.replace('IELTS ', '')}`, sub: 'Passage-based MCQ' },
             { key: 'ielts_writing_skills', title: `✍️ ${activeSubjectLabels.ielts_writing_skills.replace('IELTS ', '')}`, sub: 'Grammar & structure' },
@@ -342,17 +372,17 @@ export const GameMenu: React.FC<GameMenuProps> = ({ onSelectSubject, onSelectNav
             <button
               key={item.key}
               onClick={() => onSelectSubject(item.key as Subject)}
-              className="relative w-full bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl px-4 py-5 text-left shadow-md hover:shadow-lg hover:scale-105 transition-all duration-200 min-h-[130px]"
+              className="relative w-full bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl p-2 sm:p-3 md:p-4 text-left shadow-md hover:shadow-lg hover:scale-105 transition-all duration-200 min-h-[90px] sm:min-h-[110px] md:min-h-[130px]"
             >
-              <span className="absolute top-2 right-2 text-[11px] font-bold bg-white text-emerald-600 rounded-full px-2 py-0.5">IELTS</span>
-              <h2 className="text-lg font-bold leading-tight">{item.title}</h2>
-              <p className="text-xs text-emerald-200 mt-1">{item.sub}</p>
+              <span className="absolute top-2 right-2 text-[9px] sm:text-[11px] font-bold bg-white text-emerald-600 rounded-full px-1.5 sm:px-2 py-0.5">IELTS</span>
+              <h2 className="text-xs sm:text-sm font-bold leading-tight mt-4">{item.title}</h2>
+              <p className="text-[10px] sm:text-xs text-emerald-200 mt-1">{item.sub}</p>
             </button>
           ))}
         </div>
 
-        <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">UNT — Unified National Testing (Kazakhstan)</p>
-        <div className="grid grid-cols-3 gap-3">
+        <p className="text-[10px] sm:text-xs font-bold text-gray-500 uppercase tracking-wider">UNT — Unified National Testing (Kazakhstan)</p>
+        <div className="grid grid-cols-3 gap-2 sm:gap-3">
           {[
             { key: 'unt_reading_literacy', title: activeSubjectLabels.unt_reading_literacy, sub: 'UNT core section' },
             { key: 'unt_math_literacy', title: activeSubjectLabels.unt_math_literacy, sub: 'UNT core section' },
@@ -363,11 +393,11 @@ export const GameMenu: React.FC<GameMenuProps> = ({ onSelectSubject, onSelectNav
             <button
               key={item.key}
               onClick={() => onSelectSubject(item.key as Subject)}
-              className="relative w-full bg-gray-600 hover:bg-gray-700 text-white rounded-2xl px-4 py-5 text-left shadow-md hover:shadow-lg hover:scale-105 transition-all duration-200 min-h-[130px]"
+              className="relative w-full bg-gray-600 hover:bg-gray-700 text-white rounded-2xl p-2 sm:p-3 md:p-4 text-left shadow-md hover:shadow-lg hover:scale-105 transition-all duration-200 min-h-[90px] sm:min-h-[110px] md:min-h-[130px]"
             >
-              <span className="absolute top-2 right-2 text-[11px] font-bold bg-white text-gray-700 rounded-full px-2 py-0.5">UNT</span>
-              <h2 className="text-lg font-bold leading-tight">{item.title}</h2>
-              <p className="text-xs text-gray-200 mt-1">{item.sub}</p>
+              <span className="absolute top-2 right-2 text-[9px] sm:text-[11px] font-bold bg-white text-gray-700 rounded-full px-1.5 sm:px-2 py-0.5">UNT</span>
+              <h2 className="text-xs sm:text-sm font-bold leading-tight mt-4">{item.title}</h2>
+              <p className="text-[10px] sm:text-xs text-gray-200 mt-1">{item.sub}</p>
             </button>
           ))}
         </div>

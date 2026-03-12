@@ -420,7 +420,7 @@ export const MultiplayerGame: React.FC<MultiplayerGameProps> = ({ onBack }) => {
 
   return (
     <div className="flex flex-col min-h-screen bg-amber-50 pb-24 animate-fade-in">
-      <div className="bg-white shadow-md px-4 py-4">
+      <div className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-white/50 shadow-sm px-4 py-4">
         <div className="max-w-md mx-auto grid grid-cols-3 items-center gap-2">
           <div>
             <p className="text-sm font-bold text-gray-900">Q {currentIndex + 1} / {questions.length}</p>

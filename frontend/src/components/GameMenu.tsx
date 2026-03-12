@@ -170,7 +170,7 @@ export const GameMenu: React.FC<GameMenuProps> = ({ onSelectSubject, onSelectNav
   if (activeTab === 'profile') {
     return (
       <div className="flex flex-col min-h-screen bg-amber-50 overflow-y-auto">
-        <div className="bg-white shadow-sm px-4 py-4 text-center">
+        <div className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-white/50 shadow-sm px-4 py-4 text-center">
           <h1 className="text-xl font-bold text-gray-900">Profile</h1>
         </div>
 
@@ -192,34 +192,34 @@ export const GameMenu: React.FC<GameMenuProps> = ({ onSelectSubject, onSelectNav
           onDeleteAccount={handleDeleteAccount}
         />
 
-        <div className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 px-4 py-3 safe-area-inset-bottom">
-          <div className="max-w-md mx-auto flex justify-around">
+        <div className="fixed bottom-4 left-0 right-0 z-50 px-4">
+          <div className="max-w-md mx-auto bg-white/90 backdrop-blur-md rounded-2xl shadow-lg border border-gray-100 px-2 py-2 flex justify-around">
             <button
               onClick={() => setActiveTab('home')}
-              className="flex flex-col items-center gap-1 text-gray-400 hover:text-gray-600 font-semibold text-xs min-w-[60px]"
+              className="flex flex-col items-center gap-0.5 px-4 py-2 rounded-xl transition-all duration-200 text-xs font-semibold min-w-[60px] text-gray-400 hover:text-gray-600"
             >
-              <span className="text-2xl">🏠</span>
+              <span className="text-xl">🏠</span>
               <span>Home</span>
             </button>
             <button
               onClick={() => onSelectNav('leaderboard')}
-              className="flex flex-col items-center gap-1 text-gray-400 hover:text-gray-600 font-semibold text-xs min-w-[60px]"
+              className="flex flex-col items-center gap-0.5 px-4 py-2 rounded-xl transition-all duration-200 text-xs font-semibold min-w-[60px] text-gray-400 hover:text-gray-600"
             >
-              <span className="text-2xl">🏆</span>
+              <span className="text-xl">🏆</span>
               <span>Leaderboard</span>
             </button>
             <button
               onClick={() => onSelectNav('stats')}
-              className="flex flex-col items-center gap-1 text-gray-400 hover:text-gray-600 font-semibold text-xs min-w-[60px]"
+              className="flex flex-col items-center gap-0.5 px-4 py-2 rounded-xl transition-all duration-200 text-xs font-semibold min-w-[60px] text-gray-400 hover:text-gray-600"
             >
-              <span className="text-2xl">📈</span>
+              <span className="text-xl">📈</span>
               <span>Stats</span>
             </button>
             <button
               onClick={() => setActiveTab('profile')}
-              className="flex flex-col items-center gap-1 text-teal-500 hover:text-teal-600 font-semibold text-xs min-w-[60px]"
+              className="flex flex-col items-center gap-0.5 px-4 py-2 rounded-xl transition-all duration-200 text-xs font-semibold min-w-[60px] bg-cyan-500/10 text-cyan-600"
             >
-              <span className="text-2xl">👤</span>
+              <span className="text-xl">👤</span>
               <span>Profile</span>
             </button>
           </div>
@@ -230,7 +230,7 @@ export const GameMenu: React.FC<GameMenuProps> = ({ onSelectSubject, onSelectNav
 
   return (
     <div className="flex flex-col min-h-screen bg-amber-50 overflow-y-auto animate-fade-in">
-      <div className="bg-white shadow-sm px-4 py-4 text-center">
+      <div className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-white/50 shadow-sm px-4 py-4 text-center">
         <div className="text-xl font-bold text-gray-900">🧠 Exam - Prep</div>
         <p className="text-lg font-bold text-gray-900 mt-2">Welcome back, {user?.username}! 👋</p>
         {streakData.currentStreak > 0 && (
@@ -387,31 +387,33 @@ export const GameMenu: React.FC<GameMenuProps> = ({ onSelectSubject, onSelectNav
         </div>
       </div>
 
-      <div className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 px-4 py-3 safe-area-inset-bottom">
-        <div className="max-w-md mx-auto flex justify-around">
-          <button className="flex flex-col items-center gap-1 text-cyan-500 hover:text-cyan-600 active:text-cyan-700 font-semibold text-xs sm:text-sm min-w-[60px]">
-            <span className="text-2xl sm:text-xl">🏠</span>
+      <div className="fixed bottom-4 left-0 right-0 z-50 px-4">
+        <div className="max-w-md mx-auto bg-white/90 backdrop-blur-md rounded-2xl shadow-lg border border-gray-100 px-2 py-2 flex justify-around">
+          <button
+            className="flex flex-col items-center gap-0.5 px-4 py-2 rounded-xl transition-all duration-200 text-xs font-semibold min-w-[60px] bg-cyan-500/10 text-cyan-600"
+          >
+            <span className="text-xl">🏠</span>
             <span>Home</span>
           </button>
-          <button 
+          <button
             onClick={() => onSelectNav('leaderboard')}
-            className="flex flex-col items-center gap-1 text-gray-400 hover:text-gray-600 active:text-gray-700 font-semibold text-xs sm:text-sm min-w-[60px]"
+            className="flex flex-col items-center gap-0.5 px-4 py-2 rounded-xl transition-all duration-200 text-xs font-semibold min-w-[60px] text-gray-400 hover:text-gray-600"
           >
-            <span className="text-2xl sm:text-xl">🏆</span>
-            <span className="text-xs">Leaderboard</span>
+            <span className="text-xl">🏆</span>
+            <span>Leaderboard</span>
           </button>
-          <button 
+          <button
             onClick={() => onSelectNav('stats')}
-            className="flex flex-col items-center gap-1 text-gray-400 hover:text-gray-600 active:text-gray-700 font-semibold text-xs sm:text-sm min-w-[60px]"
+            className="flex flex-col items-center gap-0.5 px-4 py-2 rounded-xl transition-all duration-200 text-xs font-semibold min-w-[60px] text-gray-400 hover:text-gray-600"
           >
-            <span className="text-2xl sm:text-xl">📈</span>
+            <span className="text-xl">📈</span>
             <span>Stats</span>
           </button>
-          <button 
+          <button
             onClick={() => setActiveTab('profile')}
-            className="flex flex-col items-center gap-1 text-gray-400 hover:text-gray-600 active:text-gray-700 font-semibold text-xs sm:text-sm min-w-[60px]"
+            className="flex flex-col items-center gap-0.5 px-4 py-2 rounded-xl transition-all duration-200 text-xs font-semibold min-w-[60px] text-gray-400 hover:text-gray-600"
           >
-            <span className="text-2xl sm:text-xl">👤</span>
+            <span className="text-xl">👤</span>
             <span>Profile</span>
           </button>
         </div>

@@ -38,8 +38,12 @@ export const Login: React.FC<{ onLoginSuccess: () => void }> = ({ onLoginSuccess
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-amber-50 px-4">
-      <div className="bg-white rounded-2xl shadow-lg p-6 sm:p-8 w-full max-w-md mx-auto">
+    <div
+      className="flex justify-center items-center min-h-screen bg-slate-100 px-4"
+      style={{ backgroundImage: 'radial-gradient(circle, #cbd5e1 1px, transparent 1px)', backgroundSize: '24px 24px' }}
+    >
+      <div className="bg-white rounded-2xl shadow-lg w-full max-w-md mx-auto overflow-hidden border-t-4 border-cyan-500">
+        <div className="p-6 sm:p-8">
         <div className="text-center mb-8">
           <div className="text-5xl sm:text-6xl mb-3">🧠</div>
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Exam - Prep</h1>
@@ -166,6 +170,7 @@ export const Login: React.FC<{ onLoginSuccess: () => void }> = ({ onLoginSuccess
             {isSignup ? 'Log In' : 'Sign Up'}
           </button>
         </p>
+        </div>
       </div>
     </div>
   );

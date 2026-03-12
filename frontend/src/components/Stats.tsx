@@ -80,7 +80,7 @@ export const Stats: React.FC<StatsProps> = ({ onBack }) => {
 
   return (
     <div className="flex flex-col min-h-screen bg-amber-50">
-      <div className="bg-white shadow-sm px-4 py-6">
+      <div className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-white/50 shadow-sm px-4 py-6">
         <div className="max-w-5xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
           <div className="text-center sm:text-left">
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">📊 Stats Overview</h1>

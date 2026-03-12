@@ -91,7 +91,7 @@ export const GameMenu: React.FC<GameMenuProps> = ({ onSelectSubject, onSelectNav
     mode: 'solo';
   } | null>(null);
 
-  const [showFeedbackBanner, setShowFeedbackBanner] = useState(() => localStorage.getItem('examPrepFeedbackBannerDismissed') !== 'true');
+
 
   const totalGames = (user as any)?.totalGamesPlayed || 0;
   const totalWins = (user as any)?.totalWins || 0;
@@ -286,33 +286,18 @@ export const GameMenu: React.FC<GameMenuProps> = ({ onSelectSubject, onSelectNav
           </div>
         </div>
 
-        {showFeedbackBanner && (
-          <div className="bg-gradient-to-r from-teal-50 to-cyan-50 border border-teal-200 rounded-2xl px-4 py-3 flex items-center justify-between shadow-sm">
-            <div className="flex items-center gap-3">
-              <span className="text-xl">📝</span>
-              <div>
-                <p className="font-bold text-gray-900 text-sm">Enjoying the app?</p>
-                <a
-                  href="https://docs.google.com/forms/d/e/1FAIpQLSeB2OPr7cSpUyAJIDBDi140rMCbW31Jg_tMAl-Ec4Nt-hMVHA/viewform"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-teal-600 text-xs font-semibold underline"
-                >
-                  Let us know! 📝 →
-                </a>
-              </div>
-            </div>
-            <button
-              onClick={() => {
-                localStorage.setItem('examPrepFeedbackBannerDismissed', 'true');
-                setShowFeedbackBanner(false);
-              }}
-              className="text-gray-400 hover:text-gray-600 text-xl font-bold ml-2"
-            >
-              ×
-            </button>
+        <a
+          href="https://docs.google.com/forms/d/e/1FAIpQLSeB2OPr7cSpUyAJIDBDi140rMCbW31Jg_tMAl-Ec4Nt-hMVHA/viewform"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-3 bg-gradient-to-r from-teal-50 to-cyan-50 border border-teal-200 rounded-2xl px-4 py-3 shadow-sm hover:shadow-md transition-shadow duration-200"
+        >
+          <span className="text-2xl">📝</span>
+          <div>
+            <p className="font-bold text-gray-900 text-sm">Enjoying the app? Let us know!</p>
+            <p className="text-teal-600 text-xs font-semibold">Give feedback → takes 1 minute</p>
           </div>
-        )}
+        </a>
 
         {lastGameSettings && (
           <button

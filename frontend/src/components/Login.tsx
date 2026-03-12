@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { KAZAKHSTAN_CITIES, getSchoolsByCity } from '../utils/kazakhstanSchools';
 
@@ -9,10 +9,16 @@ export const Login: React.FC<{ onLoginSuccess: () => void }> = ({ onLoginSuccess
   const [isSignup, setIsSignup] = useState(false);
   const [username, setUsername] = useState('');
   const [schoolName, setSchoolName] = useState('');
+  const [schoolSearch, setSchoolSearch] = useState('');
+  const [showSchoolDropdown, setShowSchoolDropdown] = useState(false);
   const [city, setCity] = useState('');
   const [centerName, setCenterName] = useState('');
+  const schoolInputRef = useRef<HTMLInputElement>(null);
   const { login, signup } = useAuth();
   const availableSchools = getSchoolsByCity(city);
+  const filteredSchools = availableSchools.filter((s) =>
+    s.toLowerCase().includes(schoolSearch.toLowerCase())
+  );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -56,6 +62,7 @@ export const Login: React.FC<{ onLoginSuccess: () => void }> = ({ onLoginSuccess
                 onChange={(e) => {
                   setCity(e.target.value);
                   setSchoolName('');
+                  setSchoolSearch('');
                 }}
                 className="px-4 py-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-400 text-base bg-white"
                 required
@@ -67,20 +74,53 @@ export const Login: React.FC<{ onLoginSuccess: () => void }> = ({ onLoginSuccess
                   </option>
                 ))}
               </select>
-              <select
-                value={schoolName}
-                onChange={(e) => setSchoolName(e.target.value)}
-                className="px-4 py-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-400 text-base bg-white disabled:bg-gray-100 disabled:text-gray-400"
-                required
-                disabled={!city}
-              >
-                <option value="">Select school</option>
-                {availableSchools.map((schoolOption) => (
-                  <option key={schoolOption} value={schoolOption}>
-                    {schoolOption}
-                  </option>
-                ))}
-              </select>
+              {/* Searchable school combobox */}
+              <div className="relative">
+                <input
+                  ref={schoolInputRef}
+                  type="text"
+                  placeholder={city ? 'Search school...' : 'Select a city first'}
+                  value={schoolSearch}
+                  disabled={!city}
+                  onChange={(e) => {
+                    setSchoolSearch(e.target.value);
+                    setSchoolName('');
+                    setShowSchoolDropdown(true);
+                  }}
+                  onFocus={() => setShowSchoolDropdown(true)}
+                  onBlur={() => setTimeout(() => setShowSchoolDropdown(false), 150)}
+                  className="w-full px-4 py-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-400 text-base bg-white disabled:bg-gray-100 disabled:text-gray-400"
+                  required={!schoolName}
+                  autoComplete="off"
+                />
+                {schoolName && (
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-green-500 text-lg">✓</span>
+                )}
+                {showSchoolDropdown && filteredSchools.length > 0 && (
+                  <ul className="absolute z-50 w-full bg-white border border-gray-200 rounded-xl shadow-lg mt-1 max-h-48 overflow-y-auto">
+                    {filteredSchools.map((school) => (
+                      <li
+                        key={school}
+                        onMouseDown={() => {
+                          setSchoolName(school);
+                          setSchoolSearch(school);
+                          setShowSchoolDropdown(false);
+                        }}
+                        className={`px-4 py-3 text-sm cursor-pointer hover:bg-cyan-50 ${
+                          school === schoolName ? 'bg-cyan-50 font-semibold text-cyan-700' : 'text-gray-800'
+                        }`}
+                      >
+                        {school}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                {showSchoolDropdown && city && filteredSchools.length === 0 && (
+                  <div className="absolute z-50 w-full bg-white border border-gray-200 rounded-xl shadow-lg mt-1 px-4 py-3 text-sm text-gray-400">
+                    No schools found
+                  </div>
+                )}
+              </div>
               <input
                 type="text"
                 placeholder="Center name"

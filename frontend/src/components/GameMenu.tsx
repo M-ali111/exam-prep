@@ -263,43 +263,33 @@ export const GameMenu: React.FC<GameMenuProps> = ({ onSelectSubject, onSelectNav
           <p className="text-xs text-gray-500 mt-3">IELTS and English Language subjects stay in English.</p>
         </div>
 
-        <div className="bg-gradient-to-r from-amber-200 via-yellow-200 to-orange-200 rounded-2xl shadow-md p-6 hover:shadow-lg transition-shadow duration-200">
-          <div className="flex items-center justify-between mb-4">
-            <span className="text-5xl animate-bounce">🔥</span>
-            <span className="text-6xl font-bold text-orange-600">{streakData.currentStreak}</span>
+        <div className="bg-gradient-to-r from-amber-200 via-yellow-200 to-orange-200 rounded-2xl shadow-md px-4 py-3 hover:shadow-lg transition-shadow duration-200">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <span className="text-3xl">🔥</span>
+              <div>
+                <p className="font-bold text-gray-900 text-sm">Today's Goal</p>
+                <p className="text-xs text-gray-600">{streakData.todayGameCount}/3 games today • Longest: {streakData.longestStreak}</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="flex gap-1">
+                {[...Array(3)].map((_, i) => (
+                  <div
+                    key={i}
+                    className={`w-5 h-2 rounded-full transition-all ${i < streakData.todayGameCount ? 'bg-orange-500' : 'bg-white/60'}`}
+                  />
+                ))}
+              </div>
+              <span className="text-2xl font-bold text-orange-600">{streakData.currentStreak}</span>
+            </div>
           </div>
-          <p className="font-bold text-gray-900 mb-2">Today's Goal</p>
-          <p className="text-sm font-medium text-gray-700 mb-3">
-            Complete 3 games to maintain your streak
-          </p>
-          <div className="flex gap-1">
-            {[...Array(3)].map((_, i) => (
-              <div
-                key={i}
-                className={`flex-1 h-2 rounded-full transition-all ${
-                  i < streakData.todayGameCount ? 'bg-yellow-400' : 'bg-white/50'
-                }`}
-              />
-            ))}
-          </div>
-          <p className="text-xs text-gray-600 mt-3 font-semibold">
-            {streakData.todayGameCount}/3 games today • Longest: {streakData.longestStreak}
-          </p>
         </div>
 
-        {lastGameSettings && (
-          <button
-            onClick={handleQuickPlay}
-            className="w-full border-2 border-teal-500 text-teal-600 bg-white rounded-2xl px-4 py-4 min-h-[56px] font-bold shadow-sm hover:scale-105 transition-transform duration-200"
-          >
-            {quickPlayLabel}
-          </button>
-        )}
-
         {showFeedbackBanner && (
-          <div className="bg-gradient-to-r from-teal-50 to-cyan-50 border border-teal-200 rounded-2xl p-4 flex items-center justify-between shadow-sm">
+          <div className="bg-gradient-to-r from-teal-50 to-cyan-50 border border-teal-200 rounded-2xl px-4 py-3 flex items-center justify-between shadow-sm">
             <div className="flex items-center gap-3">
-              <span className="text-2xl">📝</span>
+              <span className="text-xl">📝</span>
               <div>
                 <p className="font-bold text-gray-900 text-sm">Enjoying the app?</p>
                 <a
@@ -322,6 +312,15 @@ export const GameMenu: React.FC<GameMenuProps> = ({ onSelectSubject, onSelectNav
               ×
             </button>
           </div>
+        )}
+
+        {lastGameSettings && (
+          <button
+            onClick={handleQuickPlay}
+            className="w-full border-2 border-teal-500 text-teal-600 bg-white rounded-2xl px-4 py-4 min-h-[56px] font-bold shadow-sm hover:scale-105 transition-transform duration-200"
+          >
+            {quickPlayLabel}
+          </button>
         )}
 
         <p className="text-[10px] sm:text-xs font-bold text-gray-500 uppercase tracking-wider">NIS — Nazarbayev Intellectual Schools</p>

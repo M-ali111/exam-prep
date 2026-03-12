@@ -295,7 +295,7 @@ export const GameMenu: React.FC<GameMenuProps> = ({ onSelectSubject, onSelectNav
         )}
 
         <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">NIS — Nazarbayev Intellectual Schools</p>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-3 gap-3">
           {[
             { key: 'mathematics', title: activeSubjectLabels.mathematics },
             { key: 'natural_sciences', title: activeSubjectLabels.natural_sciences },
@@ -314,7 +314,7 @@ export const GameMenu: React.FC<GameMenuProps> = ({ onSelectSubject, onSelectNav
         </div>
 
         <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">BIL — Bilim-Innovation Lyceum</p>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-3 gap-3">
           {[
             { key: 'bil_mathematics_logic', title: activeSubjectLabels.bil_mathematics_logic, sub: '55 questions' },
             { key: 'bil_kazakh_language', title: activeSubjectLabels.bil_kazakh_language, sub: '10 questions' },
@@ -333,7 +333,7 @@ export const GameMenu: React.FC<GameMenuProps> = ({ onSelectSubject, onSelectNav
         </div>
 
         <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">IELTS — International English Language Testing</p>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-3 gap-3">
           {[
             { key: 'ielts_reading', title: `📖 ${activeSubjectLabels.ielts_reading.replace('IELTS ', '')}`, sub: 'Passage-based MCQ' },
             { key: 'ielts_writing_skills', title: `✍️ ${activeSubjectLabels.ielts_writing_skills.replace('IELTS ', '')}`, sub: 'Grammar & structure' },
@@ -352,7 +352,7 @@ export const GameMenu: React.FC<GameMenuProps> = ({ onSelectSubject, onSelectNav
         </div>
 
         <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">UNT — Unified National Testing (Kazakhstan)</p>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-3 gap-3">
           {[
             { key: 'unt_reading_literacy', title: activeSubjectLabels.unt_reading_literacy, sub: 'UNT core section' },
             { key: 'unt_math_literacy', title: activeSubjectLabels.unt_math_literacy, sub: 'UNT core section' },

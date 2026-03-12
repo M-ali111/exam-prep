@@ -236,9 +236,8 @@ export const GameMenu: React.FC<GameMenuProps> = ({ onSelectSubject, onSelectNav
 
       {/* Hero welcome banner */}
       <div className="bg-gradient-to-br from-cyan-500 to-teal-600 px-4 pb-6 pt-4 text-white">
-        <div className="max-w-md mx-auto">
-          <p className="text-lg font-semibold opacity-80">Good day,</p>
-          <p className="text-2xl font-bold">{user?.username} 👋</p>
+        <div className="max-w-md mx-auto text-center">
+          <p className="text-2xl font-bold">Welcome, {user?.username}! 👋</p>
           {streakData.currentStreak > 0 && (
             <span className="inline-flex items-center gap-1 mt-2 bg-white/20 rounded-full px-3 py-1 text-sm font-semibold">
               🔥 {streakData.currentStreak} day streak

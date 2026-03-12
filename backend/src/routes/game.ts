@@ -138,7 +138,10 @@ router.get('/leaderboard/global', async (req: Request, res: Response) => {
     const limit = req.query.limit ? parseInt(req.query.limit as string) : 50;
     const city = typeof req.query.city === 'string' ? req.query.city : undefined;
     const schoolName = typeof req.query.schoolName === 'string' ? req.query.schoolName : undefined;
-    const leaderboard = await gameService.getLeaderboard(limit, { city, schoolName });
+    const subject = typeof req.query.subject === 'string'
+      ? parseSubject(req.query.subject)
+      : undefined;
+    const leaderboard = await gameService.getLeaderboard(limit, { city, schoolName, subject });
     res.json(leaderboard);
   } catch (error: any) {
     res.status(400).json({ error: error.message });

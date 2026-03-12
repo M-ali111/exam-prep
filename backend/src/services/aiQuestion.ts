@@ -947,23 +947,123 @@ function buildGroqUserPrompt(params: {
   subject: QuestionSubject;
 }) {
   const languageLabel = getLanguageLabel(params.language);
-  let subjectName = 'Math';
-  let subjectDescription = 'math questions';
-  
-  if (params.subject === 'logic') {
-    subjectName = 'Logic & IQ';
-    subjectDescription = 'logic and IQ questions testing pattern recognition, logical reasoning, analogies, and matrix reasoning';
-  } else if (params.subject === 'english') {
-    subjectName = 'English Language';
-    subjectDescription = 'English language and literacy questions testing reading comprehension, grammar, vocabulary, spelling, and writing skills';
-  }
-  
+  const subjectBlueprints: Record<QuestionSubject, { exam: string; description: string; coverage: string }> = {
+    math: {
+      exam: 'NIS/BIL',
+      description: 'mathematics questions',
+      coverage: 'Balanced coverage: arithmetic, algebra, geometry, percentages/ratios, and multi-step word problems.',
+    },
+    logic: {
+      exam: 'NIS/BIL',
+      description: 'logic and IQ questions',
+      coverage: 'Balanced coverage: number patterns, verbal logic, analogies, odd-one-out, and deduction questions.',
+    },
+    english: {
+      exam: 'NIS/BIL',
+      description: 'English language questions',
+      coverage: 'Balanced coverage: grammar, vocabulary in context, sentence correction, and short reading comprehension.',
+    },
+    physics: {
+      exam: 'NIS/BIL',
+      description: 'physics questions',
+      coverage: 'Balanced coverage: mechanics, electricity, waves/optics, thermodynamics, and basic data interpretation.',
+    },
+    chemistry: {
+      exam: 'NIS/BIL',
+      description: 'chemistry questions',
+      coverage: 'Balanced coverage: atomic structure, periodic trends, bonding, reactions, and simple stoichiometry.',
+    },
+    biology: {
+      exam: 'NIS/BIL',
+      description: 'biology questions',
+      coverage: 'Balanced coverage: cell biology, human systems, genetics, ecology, and interpretation of short biological descriptions.',
+    },
+    geography: {
+      exam: 'NIS/BIL',
+      description: 'geography questions',
+      coverage: 'Balanced coverage: physical geography, Kazakhstan geography, maps/scale, climate, and population/economy basics.',
+    },
+    history: {
+      exam: 'NIS/BIL',
+      description: 'history questions',
+      coverage: 'Balanced coverage: chronology, key figures, causes/consequences, world history anchors, and Kazakhstan history anchors.',
+    },
+    informatics: {
+      exam: 'NIS/BIL',
+      description: 'informatics questions',
+      coverage: 'Balanced coverage: algorithms, logical flow, binary/number systems, data representation, and basic coding reasoning.',
+    },
+    bil_math_logic: {
+      exam: 'BIL Entrance',
+      description: 'BIL mathematics and logic questions',
+      coverage: 'Balanced BIL-style mix: arithmetic and algebra, geometry, logical sequences, and practical word problems.',
+    },
+    kazakh: {
+      exam: 'BIL Entrance',
+      description: 'Kazakh language questions',
+      coverage: 'Balanced coverage: morphology/grammar, spelling, vocabulary, and short comprehension in natural Kazakh language.',
+    },
+    history_kz: {
+      exam: 'BIL Entrance',
+      description: 'History of Kazakhstan questions',
+      coverage: 'Balanced coverage: ancient, medieval, imperial, Soviet, and independent Kazakhstan milestones.',
+    },
+    ielts_reading: {
+      exam: 'IELTS Academic',
+      description: 'IELTS Reading passage-based questions',
+      coverage: 'Balanced coverage: main idea, specific detail, vocabulary in context, inference, and author attitude.',
+    },
+    ielts_writing: {
+      exam: 'IELTS Academic',
+      description: 'IELTS Writing skills questions',
+      coverage: 'Balanced coverage: task response, coherence/cohesion, grammar range/accuracy, lexical resource, and register.',
+    },
+    ielts_vocab: {
+      exam: 'IELTS Academic',
+      description: 'IELTS vocabulary questions',
+      coverage: 'Balanced coverage: AWL vocabulary, collocations, paraphrasing, word formation, and connotation in context.',
+    },
+    unt_reading: {
+      exam: 'UNT',
+      description: 'UNT reading literacy questions',
+      coverage: 'Balanced coverage: purpose, main idea, inference, argument structure, and context vocabulary.',
+    },
+    unt_math_literacy: {
+      exam: 'UNT',
+      description: 'UNT math literacy questions',
+      coverage: 'Balanced coverage: percentages, ratios, tables/charts, practical calculations, and probability basics.',
+    },
+    unt_history_kz: {
+      exam: 'UNT',
+      description: 'UNT History of Kazakhstan questions',
+      coverage: 'Balanced coverage: key dates, personalities, historical sequence, and causality in Kazakhstan history.',
+    },
+    unt_profile_math: {
+      exam: 'UNT Profile',
+      description: 'UNT profile mathematics questions',
+      coverage: 'Balanced coverage: algebra, functions, geometry, trigonometry, and combinatorics/probability.',
+    },
+    unt_profile_physics: {
+      exam: 'UNT Profile',
+      description: 'UNT profile physics questions',
+      coverage: 'Balanced coverage: mechanics, electricity, optics, thermodynamics, and modern physics basics.',
+    },
+  };
+
+  const blueprint = subjectBlueprints[params.subject] || subjectBlueprints.math;
+
   return (
-    `Generate ${params.count} ${subjectDescription} for a student applying to NIS/BIL ` +
-    `for grade ${params.gradeLabel} entry. Difficulty: ${params.difficulty}. ` +
+    `Generate exactly ${params.count} high-quality ${blueprint.description} for ${blueprint.exam}. ` +
+    `Target level: ${params.gradeLabel}. Difficulty: ${params.difficulty}. ` +
     `Topic: ${params.topic}. ` +
+    `${blueprint.coverage} ` +
+    'Quality rules: each question must have one clearly correct answer and three plausible distractors. ' +
+    'Avoid ambiguous wording, trick phrasing, and culturally irrelevant context. ' +
+    'Use realistic exam phrasing and avoid duplicate question stems. ' +
+    'Where calculation is required, ensure numeric consistency and verify the provided correctAnswer matches one option exactly. ' +
+    'Before finalizing, self-check each item for exam alignment, factual correctness, and level appropriateness. ' +
     `All text in the response including question, options, and explanation must be in ${languageLabel} only. ` +
-    'No mixing of languages. ' +
+    'No mixing of languages. Keep explanations concise and exam-oriented. ' +
     'Return ONLY a JSON array in this exact format:\n' +
     '[\n' +
     '  {\n' +
@@ -994,7 +1094,7 @@ async function createGroqCompletionWithRetry(
       const payload: any = {
         model: GROQ_MODEL,
         messages,
-        temperature: 0.7,
+        temperature: 0.5,
         max_tokens: 2000,
       };
 
@@ -1027,7 +1127,7 @@ async function createGroqCompletion(messages: Array<{ role: 'system' | 'user'; c
   const payload: any = {
     model: GROQ_MODEL,
     messages,
-    temperature: 0.7,
+    temperature: 0.5,
     max_tokens: 2000,
   };
 
@@ -1181,6 +1281,202 @@ function parseGroqReadingPassage(raw: string): NisBilQuestion[] {
   }
 
   return normalized;
+}
+
+interface QuestionQualityScore {
+  total: number;
+  clarity: number;
+  correctness: number;
+  difficultyFit: number;
+  subjectRelevance: number;
+  subjectSpecific: number;
+}
+
+const QUALITY_THRESHOLD = 85;
+
+const SUBJECT_KEYWORDS: Record<QuestionSubject, string[]> = {
+  math: ['algebra', 'equation', 'fraction', 'percent', 'ratio', 'geometry', 'number', 'calculate'],
+  logic: ['pattern', 'sequence', 'logic', 'analogy', 'deduction', 'odd', 'reasoning'],
+  english: ['grammar', 'vocabulary', 'sentence', 'reading', 'synonym', 'antonym', 'tense'],
+  physics: ['force', 'motion', 'energy', 'electric', 'voltage', 'wave', 'optics', 'thermal'],
+  chemistry: ['atom', 'molecule', 'reaction', 'acid', 'base', 'periodic', 'compound', 'bond'],
+  biology: ['cell', 'gene', 'organism', 'ecosystem', 'anatomy', 'photosynthesis', 'dna'],
+  geography: ['climate', 'map', 'population', 'resource', 'region', 'capital', 'latitude'],
+  history: ['century', 'war', 'empire', 'independence', 'king', 'historical', 'date'],
+  informatics: ['algorithm', 'binary', 'code', 'program', 'data', 'cpu', 'logic'],
+  bil_math_logic: ['equation', 'pattern', 'number', 'ratio', 'geometry', 'word problem'],
+  kazakh: ['kazakh', 'soz', 'synonym', 'grammar', 'sentence', 'tili'],
+  history_kz: ['kazakhstan', 'khanate', 'independence', 'saka', 'soviet', 'astana'],
+  ielts_reading: ['passage', 'author', 'inference', 'main idea', 'context', 'paragraph'],
+  ielts_writing: ['coherence', 'cohesion', 'register', 'essay', 'task', 'paragraph'],
+  ielts_vocab: ['collocation', 'academic', 'paraphrase', 'synonym', 'word formation'],
+  unt_reading: ['main idea', 'inference', 'author', 'argument', 'context'],
+  unt_math_literacy: ['percent', 'ratio', 'chart', 'table', 'probability', 'practical'],
+  unt_history_kz: ['kazakhstan', 'khanate', 'independence', 'soviet', 'history'],
+  unt_profile_math: ['function', 'algebra', 'trigonometry', 'geometry', 'probability'],
+  unt_profile_physics: ['mechanics', 'electricity', 'optics', 'thermal', 'newton'],
+};
+
+function normalizeForMatch(value: string): string {
+  return value.toLowerCase().replace(/\s+/g, ' ').trim();
+}
+
+function scoreSubjectSpecificQuality(q: NisBilQuestion, subject: QuestionSubject): number {
+  const question = normalizeForMatch(q.question || '');
+  const optionsText = normalizeForMatch((q.options || []).join(' '));
+  const passage = normalizeForMatch(q.passage || '');
+  let score = 0;
+
+  if (subject === 'ielts_reading') {
+    if (passage.length >= 700) score += 10;
+    if (/(main idea|inference|author|context|detail|paragraph)/.test(question)) score += 10;
+    return score;
+  }
+
+  if (subject === 'unt_math_literacy') {
+    if (/(tenge|km|hour|liter|%|percent|table|chart|graph)/.test(question + ' ' + optionsText)) score += 10;
+    if (/(price|cost|discount|probability|ratio|average|speed)/.test(question)) score += 10;
+    return score;
+  }
+
+  if (subject === 'unt_profile_math') {
+    if (/(equation|function|trigonometry|geometry|probability|combinatorics|sin|cos|x\^2)/.test(question + ' ' + optionsText)) score += 12;
+    if (/[=+\-*/^]/.test(question)) score += 8;
+    return score;
+  }
+
+  if (subject === 'unt_profile_physics') {
+    if (/(mechanics|newton|force|electric|optics|thermal|wave|voltage|current)/.test(question + ' ' + optionsText)) score += 12;
+    if (/(n|m\/s|v|a|w|j|ohm|pa|kg)/.test(question + ' ' + optionsText)) score += 8;
+    return score;
+  }
+
+  if (subject === 'history_kz' || subject === 'unt_history_kz') {
+    if (/(kazakhstan|khanate|astana|independence|soviet|saka)/.test(question + ' ' + optionsText)) score += 12;
+    if (/(year|century|date|19|20)/.test(question + ' ' + optionsText)) score += 8;
+    return score;
+  }
+
+  if (subject === 'kazakh') {
+    if (/[әіңғүұқөһ]/i.test((q.question || '') + ' ' + (q.options || []).join(' '))) score += 12;
+    if (/(сөйлем|сөз|синоним|антоним|грамматика|емле)/i.test((q.question || '') + ' ' + (q.options || []).join(' '))) score += 8;
+    return score;
+  }
+
+  if (/(math|logic|physics|chemistry|biology|geography|history|informatics|english|bil_math_logic)/.test(subject)) {
+    if ((q.explanation || '').trim().length >= 20) score += 10;
+    if ((q.topic || '').trim().length >= 4) score += 10;
+  }
+
+  return score;
+}
+
+function scoreQuestionQuality(
+  q: NisBilQuestion,
+  subject: QuestionSubject,
+  difficulty: NisBilDifficulty
+): QuestionQualityScore {
+  let clarity = 0;
+  let correctness = 0;
+  let difficultyFit = 0;
+  let subjectRelevance = 0;
+  let subjectSpecific = 0;
+
+  const questionText = (q.question || '').trim();
+  const explanationText = (q.explanation || '').trim();
+  const normalizedQuestion = normalizeForMatch(questionText);
+
+  if (questionText.length >= 20 && questionText.length <= 260) clarity += 10;
+  if (!/[{}<>]/.test(questionText)) clarity += 10;
+  if (questionText.includes('?') || questionText.toLowerCase().startsWith('solve')) clarity += 10;
+  if (explanationText.length >= 10) clarity += 10;
+
+  const options = Array.isArray(q.options) ? q.options.map((o) => o.trim()) : [];
+  const uniqueOptions = new Set(options.map((o) => normalizeForMatch(o)));
+  if (options.length === 4) correctness += 15;
+  if (uniqueOptions.size === 4) correctness += 10;
+  if (options.includes(q.correctAnswer)) correctness += 15;
+  if (normalizeForMatch(q.correctAnswer || '').length >= 1) correctness += 5;
+
+  const highComplexityMarkers = /(prove|derive|integral|derivative|matrix|stoichiometry|logarithm|vector)/i;
+  const simpleMarkers = /(what is|find|solve|choose|which)/i;
+  if (difficulty === 'easy') {
+    if (simpleMarkers.test(questionText)) difficultyFit += 20;
+    if (!highComplexityMarkers.test(questionText)) difficultyFit += 10;
+  } else if (difficulty === 'medium') {
+    if (questionText.length >= 30) difficultyFit += 10;
+    if (!highComplexityMarkers.test(questionText)) difficultyFit += 10;
+    if (simpleMarkers.test(questionText)) difficultyFit += 10;
+  } else {
+    if (questionText.length >= 40) difficultyFit += 10;
+    if (/(analyze|evaluate|determine|compare|reason)/i.test(questionText)) difficultyFit += 10;
+    difficultyFit += 10;
+  }
+
+  const keywordMatches = SUBJECT_KEYWORDS[subject].filter((kw) => normalizedQuestion.includes(kw)).length;
+  if (keywordMatches >= 1) subjectRelevance += 15;
+  if (keywordMatches >= 2) subjectRelevance += 10;
+  if (keywordMatches >= 3) subjectRelevance += 5;
+
+  subjectSpecific = scoreSubjectSpecificQuality(q, subject);
+
+  const total = clarity + correctness + difficultyFit + subjectRelevance + subjectSpecific;
+  return { total, clarity, correctness, difficultyFit, subjectRelevance, subjectSpecific };
+}
+
+function normalizeTopic(topic: string): string {
+  return normalizeForMatch(topic || '').replace(/[^a-z0-9\s]/g, '').trim() || 'general';
+}
+
+function selectHighQualityQuestions(
+  questions: NisBilQuestion[],
+  subject: QuestionSubject,
+  difficulty: NisBilDifficulty,
+  targetCount: number
+): NisBilQuestion[] {
+  const dedupe = new Set<string>();
+
+  const ranked = questions
+    .map((q) => ({ q, score: scoreQuestionQuality(q, subject, difficulty) }))
+    .filter(({ q, score }) => {
+      const key = normalizeForMatch(`${q.question}::${q.options.join('|')}`);
+      if (dedupe.has(key)) return false;
+      dedupe.add(key);
+      return score.total >= QUALITY_THRESHOLD;
+    })
+    .sort((a, b) => b.score.total - a.score.total);
+
+  // First pass: ensure topic diversity before filling remaining slots.
+  const byTopic = new Map<string, Array<typeof ranked[number]>>();
+  for (const item of ranked) {
+    const key = normalizeTopic(item.q.topic);
+    if (!byTopic.has(key)) byTopic.set(key, []);
+    byTopic.get(key)!.push(item);
+  }
+
+  const diversified: NisBilQuestion[] = [];
+  const usedQuestionKeys = new Set<string>();
+
+  for (const [, items] of byTopic) {
+    if (diversified.length >= targetCount) break;
+    const top = items[0];
+    const key = normalizeForMatch(`${top.q.question}::${top.q.options.join('|')}`);
+    if (!usedQuestionKeys.has(key)) {
+      diversified.push(top.q);
+      usedQuestionKeys.add(key);
+    }
+  }
+
+  for (const item of ranked) {
+    if (diversified.length >= targetCount) break;
+    const key = normalizeForMatch(`${item.q.question}::${item.q.options.join('|')}`);
+    if (!usedQuestionKeys.has(key)) {
+      diversified.push(item.q);
+      usedQuestionKeys.add(key);
+    }
+  }
+
+  return diversified.slice(0, targetCount);
 }
 
 function getBuiltInFallbackQuestions(
@@ -1439,10 +1735,54 @@ export async function generateNisBilQuestions(params: {
         throw new Error('Groq returned an empty response');
       }
 
-      if (params.subject === 'ielts_reading') {
-        return parseGroqReadingPassage(content);
+      const initialQuestions = params.subject === 'ielts_reading'
+        ? parseGroqReadingPassage(content)
+        : parseGroqQuestions(content);
+
+      let selectedQuestions = selectHighQualityQuestions(
+        initialQuestions,
+        params.subject,
+        params.difficulty,
+        params.count
+      );
+
+      // Regenerate only missing slots when quality-filtered set is smaller than requested.
+      let attempts = 0;
+      while (selectedQuestions.length < params.count && attempts < 2) {
+        const remaining = params.count - selectedQuestions.length;
+        const regenPrompt = `${userPrompt}\nRegenerate ${remaining} NEW replacement questions only for missing slots. Avoid overlap with previous questions.`;
+        const regenCompletion = await createGroqCompletionWithRetry(
+          [
+            { role: 'system', content: systemPrompt },
+            { role: 'user', content: regenPrompt },
+          ],
+          true
+        );
+
+        const regenContent = regenCompletion?.choices?.[0]?.message?.content;
+        if (!regenContent || typeof regenContent !== 'string') {
+          break;
+        }
+
+        const regenerated = params.subject === 'ielts_reading'
+          ? parseGroqReadingPassage(regenContent)
+          : parseGroqQuestions(regenContent);
+
+        selectedQuestions = selectHighQualityQuestions(
+          [...selectedQuestions, ...regenerated],
+          params.subject,
+          params.difficulty,
+          params.count
+        );
+
+        attempts += 1;
       }
-      return parseGroqQuestions(content);
+
+      if (selectedQuestions.length === params.count) {
+        return selectedQuestions;
+      }
+
+      throw new Error(`Insufficient high-quality questions after regeneration (${selectedQuestions.length}/${params.count})`);
     } catch (error: any) {
       // Log the error for backend debugging
       console.error('Groq question generation failed, falling back to database:', {

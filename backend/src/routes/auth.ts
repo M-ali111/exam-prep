@@ -97,4 +97,14 @@ router.get('/stats', authMiddleware, async (req: Request, res: Response) => {
   }
 });
 
+// Delete current user account and all related data
+router.delete('/account', authMiddleware, async (req: Request, res: Response) => {
+  try {
+    await authService.deleteAccount(req.userId!);
+    res.json({ success: true, message: 'Account deleted successfully' });
+  } catch (error: any) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
 export default router;

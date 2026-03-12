@@ -7,6 +7,13 @@ import { recordGameForDay, updateStreakStatus } from './streak';
 const prisma = new PrismaClient();
 type NilSubject = 'mathematics' | 'natural_sciences' | 'english_language' | 'quantitative_aptitude' | 'bil_mathematics_logic' | 'bil_kazakh_language' | 'bil_history_kazakhstan' | 'ielts_reading' | 'ielts_writing_skills' | 'ielts_vocabulary' | 'unt_reading_literacy' | 'unt_math_literacy' | 'unt_history_kazakhstan' | 'unt_profile_math' | 'unt_profile_physics';
 
+function getGenerationLanguageForSubject(subject: NilSubject, preferredLanguage: QuestionLanguage): QuestionLanguage {
+  if (subject === 'english_language' || subject.startsWith('ielts_')) {
+    return 'english';
+  }
+  return preferredLanguage;
+}
+
 const TOPICS_BY_SUBJECT: Record<NilSubject, string[]> = {
   mathematics: [
     'algebra equations',
@@ -293,6 +300,7 @@ export const gameService = {
     }
 
     const adaptiveDifficulty = await getAdaptiveDifficulty(userId);
+    const generationLanguage = getGenerationLanguageForSubject(subject, language);
 
     const aiSubject = mapNilSubjectToAiSubject(subject);
     const topic = pickRandomTopic(subject);
@@ -322,14 +330,14 @@ export const gameService = {
       topic,
       count: 10,
       difficulty: adaptiveDifficulty.label,
-      language,
+      language: generationLanguage,
       subject: aiSubject,
       difficultyValue: adaptiveDifficulty.value,
     });
 
     for (let i = 0; i < aiQuestions.length; i++) {
       const aiQ = aiQuestions[i];
-      const question = await upsertQuestionFromAi(aiQ, adaptiveDifficulty.value, language, aiSubject);
+      const question = await upsertQuestionFromAi(aiQ, adaptiveDifficulty.value, generationLanguage, aiSubject);
 
       await prisma.gameQuestion.create({
         data: {
@@ -544,20 +552,21 @@ export const gameService = {
         const difficultyLabel: NisBilDifficulty = game.difficulty >= 8 ? 'hard' : game.difficulty >= 5 ? 'medium' : 'easy';
         const nilSubject = game.subject as NilSubject;
         const gameSubject: QuestionSubject = mapNilSubjectToAiSubject(nilSubject);
+        const generationLanguage = getGenerationLanguageForSubject(nilSubject, language);
         const topic = pickRandomTopic(nilSubject);
         
         const aiQuestions = await getNisBilQuestions({
           topic,
           count: 10,
           difficulty: difficultyLabel,
-          language,
+          language: generationLanguage,
           subject: gameSubject,
           difficultyValue: game.difficulty,
         });
 
         for (let i = 0; i < aiQuestions.length; i++) {
           const aiQ = aiQuestions[i];
-          const question = await upsertQuestionFromAi(aiQ, game.difficulty, language, gameSubject);
+          const question = await upsertQuestionFromAi(aiQ, game.difficulty, generationLanguage, gameSubject);
 
           await prisma.gameQuestion.create({
             data: {
@@ -619,16 +628,18 @@ export const gameService = {
   /**
    * Get leaderboard
    */
-  async getLeaderboard(limit: number = 100, filters?: { city?: string; schoolName?: string }) {
+  async getLeaderboard(limit: number = 100, filters?: { city?: string; schoolName?: string; subject?: NilSubject }) {
     const normalizedCity = filters?.city?.trim();
     const normalizedSchoolName = filters?.schoolName?.trim();
+    const normalizedSubject = filters?.subject?.trim();
 
     // Get all users who have played at least one multiplayer game
     const usersWithMultiplayerGames = await prisma.gamePlayer.findMany({
       where: {
         game: {
           gameType: 'multiplayer',
-          status: 'completed'
+          status: 'completed',
+          ...(normalizedSubject ? { subject: normalizedSubject } : {}),
         },
         user: {
           ...(normalizedCity ? { city: normalizedCity } : {}),
@@ -672,7 +683,8 @@ export const gameService = {
             userId: user.id,
             game: {
               gameType: 'multiplayer',
-              status: 'completed'
+              status: 'completed',
+              ...(normalizedSubject ? { subject: normalizedSubject } : {}),
             }
           },
           include: {

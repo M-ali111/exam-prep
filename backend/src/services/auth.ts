@@ -133,4 +133,20 @@ export const authService = {
       winRate,
     };
   },
+
+  async deleteAccount(userId: string) {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { id: true },
+    });
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    // Related game/answer/streak records are removed via Prisma cascade rules.
+    await prisma.user.delete({
+      where: { id: userId },
+    });
+  },
 };

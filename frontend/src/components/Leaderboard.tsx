@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useApi } from '../utils/api';
 import { KAZAKHSTAN_CITIES, getSchoolsByCity } from '../utils/kazakhstanSchools';
+import { Subject } from '../context/GameContext';
 
 interface LeaderboardEntry {
   rank: number;
@@ -18,6 +19,24 @@ interface LeaderboardProps {
   onBack?: () => void;
 }
 
+const SUBJECT_OPTIONS: Array<{ value: Subject; label: string }> = [
+  { value: 'mathematics', label: 'NIS - Mathematics' },
+  { value: 'natural_sciences', label: 'NIS - Natural Sciences' },
+  { value: 'english_language', label: 'NIS - English Language' },
+  { value: 'quantitative_aptitude', label: 'NIS - Quantitative Aptitude' },
+  { value: 'bil_mathematics_logic', label: 'BIL - Mathematics & Logic' },
+  { value: 'bil_kazakh_language', label: 'BIL - Kazakh Language' },
+  { value: 'bil_history_kazakhstan', label: 'BIL - History of Kazakhstan' },
+  { value: 'ielts_reading', label: 'IELTS - Reading' },
+  { value: 'ielts_writing_skills', label: 'IELTS - Writing Skills' },
+  { value: 'ielts_vocabulary', label: 'IELTS - Vocabulary' },
+  { value: 'unt_reading_literacy', label: 'UNT - Reading Literacy' },
+  { value: 'unt_math_literacy', label: 'UNT - Math Literacy' },
+  { value: 'unt_history_kazakhstan', label: 'UNT - History of Kazakhstan' },
+  { value: 'unt_profile_math', label: 'UNT - Profile Mathematics' },
+  { value: 'unt_profile_physics', label: 'UNT - Profile Physics' },
+];
+
 const Leaderboard: React.FC<LeaderboardProps> = ({ onBack }) => {
   const { user } = useAuth();
   const { request } = useApi();
@@ -25,11 +44,13 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ onBack }) => {
   const [loading, setLoading] = useState(true);
   const [selectedCity, setSelectedCity] = useState('');
   const [selectedSchool, setSelectedSchool] = useState('');
+  const [selectedSubject, setSelectedSubject] = useState('');
   const [activeCity, setActiveCity] = useState('');
   const [activeSchool, setActiveSchool] = useState('');
+  const [activeSubject, setActiveSubject] = useState('');
 
   const availableSchools = getSchoolsByCity(selectedCity);
-  const isFiltered = !!activeCity || !!activeSchool;
+  const isFiltered = !!activeCity || !!activeSchool || !!activeSubject;
 
   const fetchLeaderboard = async () => {
     try {
@@ -37,6 +58,7 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ onBack }) => {
       const params = new URLSearchParams();
       if (activeCity) params.set('city', activeCity);
       if (activeSchool) params.set('schoolName', activeSchool);
+      if (activeSubject) params.set('subject', activeSubject);
       const suffix = params.toString() ? `?${params.toString()}` : '';
       const response = await request(`/games/leaderboard/global${suffix}`);
       setLeaderboard(response);
@@ -54,18 +76,21 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ onBack }) => {
     const interval = setInterval(fetchLeaderboard, 60000);
 
     return () => clearInterval(interval);
-  }, [activeCity, activeSchool]);
+  }, [activeCity, activeSchool, activeSubject, request]);
 
   const applyFilters = () => {
     setActiveCity(selectedCity);
     setActiveSchool(selectedSchool);
+    setActiveSubject(selectedSubject);
   };
 
   const clearFilters = () => {
     setSelectedCity('');
     setSelectedSchool('');
+    setSelectedSubject('');
     setActiveCity('');
     setActiveSchool('');
+    setActiveSubject('');
   };
 
   const getMedalEmoji = (rank: number) => {
@@ -139,6 +164,18 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ onBack }) => {
             {availableSchools.map((school) => (
               <option key={school} value={school}>
                 {school}
+              </option>
+            ))}
+          </select>
+          <select
+            value={selectedSubject}
+            onChange={(e) => setSelectedSubject(e.target.value)}
+            className="w-full px-4 py-3 border border-gray-300 rounded-xl bg-white text-sm focus:outline-none focus:ring-2 focus:ring-cyan-400"
+          >
+            <option value="">All subjects</option>
+            {SUBJECT_OPTIONS.map((subject) => (
+              <option key={subject.value} value={subject.value}>
+                {subject.label}
               </option>
             ))}
           </select>
@@ -271,7 +308,7 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ onBack }) => {
             <h3 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-2">No Players Found</h3>
             <p className="text-gray-600 text-base">
               {isFiltered
-                ? 'No players match this filter. Try another city/school or click Show Global.'
+                ? 'No players match this filter. Try another city, school, or subject, or click Show Global.'
                 : 'Be the first to play and top the global leaderboard!'}
             </p>
           </div>

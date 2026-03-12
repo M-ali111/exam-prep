@@ -1,4 +1,5 @@
 import { useAuth } from '../context/AuthContext';
+import { useCallback, useMemo } from 'react';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5050';
 const API_BASE = `${API_URL}/api`;
@@ -7,7 +8,7 @@ export const useApi = () => {
   // Call hook unconditionally at top level (Rules of Hooks)
   const { token } = useAuth();
 
-  const request = async (endpoint: string, options: RequestInit = {}) => {
+  const request = useCallback(async (endpoint: string, options: RequestInit = {}) => {
     const headers: HeadersInit = {
       'Content-Type': 'application/json',
       ...options.headers,
@@ -29,7 +30,7 @@ export const useApi = () => {
     }
 
     return response.json();
-  };
+  }, [token]);
 
-  return { request };
+  return useMemo(() => ({ request }), [request]);
 };

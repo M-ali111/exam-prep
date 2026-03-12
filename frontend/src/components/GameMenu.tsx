@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { useApi } from '../utils/api';
 import { ProfileScreen } from './ProfileScreen';
-import { Subject } from '../context/GameContext';
+import { Subject, QuestionLanguage, useGame } from '../context/GameContext';
 
 interface GameMenuProps {
   onSelectSubject: (subject: Subject) => void;
@@ -18,9 +18,64 @@ interface StreakData {
   lastStreakDate: string | null;
 }
 
+const SUBJECT_LABELS_BY_LANGUAGE: Record<QuestionLanguage, Record<Subject, string>> = {
+  english: {
+    mathematics: 'Mathematics',
+    natural_sciences: 'Natural Sciences',
+    english_language: 'English Language',
+    quantitative_aptitude: 'Quantitative Aptitude',
+    bil_mathematics_logic: 'BIL Mathematics & Logic',
+    bil_kazakh_language: 'BIL Kazakh Language',
+    bil_history_kazakhstan: 'BIL History of Kazakhstan',
+    ielts_reading: 'IELTS Reading',
+    ielts_writing_skills: 'IELTS Writing Skills',
+    ielts_vocabulary: 'IELTS Vocabulary',
+    unt_reading_literacy: 'UNT Reading Literacy',
+    unt_math_literacy: 'UNT Math Literacy',
+    unt_history_kazakhstan: 'UNT History of Kazakhstan',
+    unt_profile_math: 'UNT Profile Mathematics',
+    unt_profile_physics: 'UNT Profile Physics',
+  },
+  russian: {
+    mathematics: 'Математика',
+    natural_sciences: 'Естественные науки',
+    english_language: 'English Language',
+    quantitative_aptitude: 'Количественные способности',
+    bil_mathematics_logic: 'BIL Математика и Логика',
+    bil_kazakh_language: 'BIL Казахский язык',
+    bil_history_kazakhstan: 'BIL История Казахстана',
+    ielts_reading: 'IELTS Reading',
+    ielts_writing_skills: 'IELTS Writing Skills',
+    ielts_vocabulary: 'IELTS Vocabulary',
+    unt_reading_literacy: 'Грамотность чтения UNT',
+    unt_math_literacy: 'Математическая грамотность UNT',
+    unt_history_kazakhstan: 'История Казахстана UNT',
+    unt_profile_math: 'Профильная математика UNT',
+    unt_profile_physics: 'Профильная физика UNT',
+  },
+  kazakh: {
+    mathematics: 'Математика',
+    natural_sciences: 'Жаратылыстану',
+    english_language: 'English Language',
+    quantitative_aptitude: 'Сандық қабілет',
+    bil_mathematics_logic: 'BIL Математика және Логика',
+    bil_kazakh_language: 'BIL Қазақ тілі',
+    bil_history_kazakhstan: 'BIL Қазақстан тарихы',
+    ielts_reading: 'IELTS Reading',
+    ielts_writing_skills: 'IELTS Writing Skills',
+    ielts_vocabulary: 'IELTS Vocabulary',
+    unt_reading_literacy: 'UNT Оқу сауаттылығы',
+    unt_math_literacy: 'UNT Математикалық сауаттылық',
+    unt_history_kazakhstan: 'UNT Қазақстан тарихы',
+    unt_profile_math: 'UNT Бейіндік математика',
+    unt_profile_physics: 'UNT Бейіндік физика',
+  },
+};
+
 export const GameMenu: React.FC<GameMenuProps> = ({ onSelectSubject, onSelectNav, onLogout }) => {
-  const { user } = useAuth();
-  const { setLanguage } = useLanguage();
+  const { user, deleteAccount } = useAuth();
+  const { language, setLanguage } = useLanguage();
+  const { setSelectedLanguage } = useGame();
   const { request } = useApi();
   const [activeTab, setActiveTab] = useState<'home' | 'profile'>('home');
   const [rank] = useState<number | null>(null);
@@ -76,33 +131,38 @@ export const GameMenu: React.FC<GameMenuProps> = ({ onSelectSubject, onSelectNav
         : lastGameSettings.language === 'russian'
         ? 'Russian'
         : 'Kazakh';
-    const subjectLabelMap: Record<Subject, string> = {
-      mathematics: 'Mathematics',
-      natural_sciences: 'Natural Sciences',
-      english_language: 'English Language',
-      quantitative_aptitude: 'Quantitative Aptitude',
-      bil_mathematics_logic: 'BIL Mathematics & Logic',
-      bil_kazakh_language: 'BIL Kazakh Language',
-      bil_history_kazakhstan: 'BIL History of Kazakhstan',
-      ielts_reading: 'IELTS Reading',
-      ielts_writing_skills: 'IELTS Writing Skills',
-      ielts_vocabulary: 'IELTS Vocabulary',
-      unt_reading_literacy: 'UNT Reading Literacy',
-      unt_math_literacy: 'UNT Math Literacy',
-      unt_history_kazakhstan: 'UNT History of Kazakhstan',
-      unt_profile_math: 'UNT Profile Mathematics',
-      unt_profile_physics: 'UNT Profile Physics',
-    };
+    const subjectLabelMap = SUBJECT_LABELS_BY_LANGUAGE[lastGameSettings.language];
     return `⚡ Quick Play — ${subjectLabelMap[lastGameSettings.subject]}, ${languageLabel}`;
   }, [lastGameSettings]);
+
+  const activeSubjectLabels = useMemo(() => SUBJECT_LABELS_BY_LANGUAGE[language], [language]);
+
+  const handleLanguageChange = (nextLanguage: QuestionLanguage) => {
+    setLanguage(nextLanguage);
+    setSelectedLanguage(nextLanguage);
+  };
 
   const handleQuickPlay = () => {
     if (!lastGameSettings) return;
 
     setLanguage(lastGameSettings.language);
+    setSelectedLanguage(lastGameSettings.language);
     localStorage.setItem('quickPlayPending', 'true');
     localStorage.setItem('quickPlaySettings', JSON.stringify(lastGameSettings));
     onSelectSubject(lastGameSettings.subject);
+  };
+
+  const handleDeleteAccount = async () => {
+    const confirmed = window.confirm('Are you sure you want to delete your account? This action cannot be undone.');
+    if (!confirmed) return;
+
+    try {
+      await deleteAccount();
+      alert('Your account and all related data were deleted successfully.');
+      onLogout();
+    } catch (error: any) {
+      alert(error?.message || 'Failed to delete account');
+    }
   };
 
   if (activeTab === 'profile') {
@@ -127,6 +187,7 @@ export const GameMenu: React.FC<GameMenuProps> = ({ onSelectSubject, onSelectNav
             rank,
           }}
           onLogout={onLogout}
+          onDeleteAccount={handleDeleteAccount}
         />
 
         <div className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 px-4 py-3 safe-area-inset-bottom">
@@ -176,6 +237,30 @@ export const GameMenu: React.FC<GameMenuProps> = ({ onSelectSubject, onSelectNav
       </div>
 
       <div className="px-4 py-6 max-w-md mx-auto pb-24 space-y-4 w-full">
+        <div className="bg-white rounded-2xl shadow-md p-4">
+          <p className="text-sm font-bold text-gray-800 mb-3">Language</p>
+          <div className="grid grid-cols-3 gap-2">
+            {[
+              { key: 'english', label: 'English' },
+              { key: 'russian', label: 'Русский' },
+              { key: 'kazakh', label: 'Қазақша' },
+            ].map((langOption) => (
+              <button
+                key={langOption.key}
+                onClick={() => handleLanguageChange(langOption.key as QuestionLanguage)}
+                className={`rounded-xl py-2.5 text-sm font-semibold transition-colors ${
+                  language === langOption.key
+                    ? 'bg-cyan-500 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                {langOption.label}
+              </button>
+            ))}
+          </div>
+          <p className="text-xs text-gray-500 mt-3">IELTS and English Language subjects stay in English.</p>
+        </div>
+
         <div className="bg-gradient-to-r from-amber-200 via-yellow-200 to-orange-200 rounded-2xl shadow-md p-6 hover:shadow-lg transition-shadow duration-200">
           <div className="flex items-center justify-between mb-4">
             <span className="text-5xl animate-bounce">🔥</span>
@@ -212,10 +297,10 @@ export const GameMenu: React.FC<GameMenuProps> = ({ onSelectSubject, onSelectNav
         <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">NIS — Nazarbayev Intellectual Schools</p>
         <div className="grid grid-cols-2 gap-3">
           {[
-            { key: 'mathematics', title: 'Mathematics' },
-            { key: 'natural_sciences', title: 'Natural Sciences' },
-            { key: 'english_language', title: 'English Language' },
-            { key: 'quantitative_aptitude', title: 'Quantitative Aptitude' },
+            { key: 'mathematics', title: activeSubjectLabels.mathematics },
+            { key: 'natural_sciences', title: activeSubjectLabels.natural_sciences },
+            { key: 'english_language', title: activeSubjectLabels.english_language },
+            { key: 'quantitative_aptitude', title: activeSubjectLabels.quantitative_aptitude },
           ].map((item) => (
             <button
               key={item.key}
@@ -231,9 +316,9 @@ export const GameMenu: React.FC<GameMenuProps> = ({ onSelectSubject, onSelectNav
         <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">BIL — Bilim-Innovation Lyceum</p>
         <div className="grid grid-cols-2 gap-3">
           {[
-            { key: 'bil_mathematics_logic', title: 'Mathematics & Logic', sub: '55 questions' },
-            { key: 'bil_kazakh_language', title: 'Kazakh Language', sub: '10 questions' },
-            { key: 'bil_history_kazakhstan', title: 'History of Kazakhstan', sub: '10 questions' },
+            { key: 'bil_mathematics_logic', title: activeSubjectLabels.bil_mathematics_logic, sub: '55 questions' },
+            { key: 'bil_kazakh_language', title: activeSubjectLabels.bil_kazakh_language, sub: '10 questions' },
+            { key: 'bil_history_kazakhstan', title: activeSubjectLabels.bil_history_kazakhstan, sub: '10 questions' },
           ].map((item) => (
             <button
               key={item.key}
@@ -250,9 +335,9 @@ export const GameMenu: React.FC<GameMenuProps> = ({ onSelectSubject, onSelectNav
         <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">IELTS — International English Language Testing</p>
         <div className="grid grid-cols-2 gap-3">
           {[
-            { key: 'ielts_reading', title: '📖 Reading', sub: 'Passage-based MCQ' },
-            { key: 'ielts_writing_skills', title: '✍️ Writing Skills', sub: 'Grammar & structure' },
-            { key: 'ielts_vocabulary', title: '🎓 Vocabulary', sub: 'Word-in-context' },
+            { key: 'ielts_reading', title: `📖 ${activeSubjectLabels.ielts_reading.replace('IELTS ', '')}`, sub: 'Passage-based MCQ' },
+            { key: 'ielts_writing_skills', title: `✍️ ${activeSubjectLabels.ielts_writing_skills.replace('IELTS ', '')}`, sub: 'Grammar & structure' },
+            { key: 'ielts_vocabulary', title: `🎓 ${activeSubjectLabels.ielts_vocabulary.replace('IELTS ', '')}`, sub: 'Word-in-context' },
           ].map((item) => (
             <button
               key={item.key}
@@ -269,11 +354,11 @@ export const GameMenu: React.FC<GameMenuProps> = ({ onSelectSubject, onSelectNav
         <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">UNT — Unified National Testing (Kazakhstan)</p>
         <div className="grid grid-cols-2 gap-3">
           {[
-            { key: 'unt_reading_literacy', title: 'Reading Literacy', sub: 'UNT core section' },
-            { key: 'unt_math_literacy', title: 'Math Literacy', sub: 'UNT core section' },
-            { key: 'unt_history_kazakhstan', title: 'History of Kazakhstan', sub: 'UNT core section' },
-            { key: 'unt_profile_math', title: 'Profile Mathematics', sub: 'UNT profile subject' },
-            { key: 'unt_profile_physics', title: 'Profile Physics', sub: 'UNT profile subject' },
+            { key: 'unt_reading_literacy', title: activeSubjectLabels.unt_reading_literacy, sub: 'UNT core section' },
+            { key: 'unt_math_literacy', title: activeSubjectLabels.unt_math_literacy, sub: 'UNT core section' },
+            { key: 'unt_history_kazakhstan', title: activeSubjectLabels.unt_history_kazakhstan, sub: 'UNT core section' },
+            { key: 'unt_profile_math', title: activeSubjectLabels.unt_profile_math, sub: 'UNT profile subject' },
+            { key: 'unt_profile_physics', title: activeSubjectLabels.unt_profile_physics, sub: 'UNT profile subject' },
           ].map((item) => (
             <button
               key={item.key}

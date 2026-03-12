@@ -26,6 +26,7 @@ interface AuthContextType {
     centerName: string
   ) => Promise<void>;
   logout: () => void;
+  deleteAccount: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -142,8 +143,30 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     clearAuth();
   };
 
+  const deleteAccount = async () => {
+    const authToken = token || localStorage.getItem('token');
+
+    if (!authToken) {
+      throw new Error('Not authenticated');
+    }
+
+    const response = await fetch(`${API_URL}/api/auth/account`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+      },
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to delete account');
+    }
+
+    clearAuth();
+  };
+
   return (
-    <AuthContext.Provider value={{ user, token, login, signup, logout }}>
+    <AuthContext.Provider value={{ user, token, login, signup, logout, deleteAccount }}>
       {children}
     </AuthContext.Provider>
   );

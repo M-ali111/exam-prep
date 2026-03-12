@@ -17,6 +17,7 @@ interface ProfileScreenProps {
   centerName: string;
   data: ProfileData;
   onLogout: () => void;
+  onDeleteAccount: () => void;
 }
 
 const getInitials = (username: string) =>
@@ -27,7 +28,7 @@ const getInitials = (username: string) =>
     .slice(0, 2)
     .join('') || 'U';
 
-export const ProfileScreen: React.FC<ProfileScreenProps> = ({ username, schoolName, city, centerName, data, onLogout }) => {
+export const ProfileScreen: React.FC<ProfileScreenProps> = ({ username, schoolName, city, centerName, data, onLogout, onDeleteAccount }) => {
   const badges = [
     { icon: '🎯', title: 'First Game', unlocked: data.totalGames >= 1 },
     { icon: '🧠', title: 'Logic Master', unlocked: data.logicAccuracy > 70 },
@@ -111,6 +112,13 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({ username, schoolNa
         className="w-full border-2 border-red-500 text-red-500 rounded-2xl min-h-[56px] font-bold text-lg hover:scale-105 transition-transform duration-200 shadow-sm"
       >
         Logout
+      </button>
+
+      <button
+        onClick={onDeleteAccount}
+        className="w-full bg-red-600 hover:bg-red-700 text-white rounded-2xl min-h-[56px] font-bold text-lg transition-colors duration-200 shadow-sm"
+      >
+        Delete Account
       </button>
     </div>
   );

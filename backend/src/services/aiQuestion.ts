@@ -58,25 +58,24 @@ const MAX_BUILD_ATTEMPTS = 20;
 
 const GROQ_MODEL = 'llama-3.3-70b-versatile';
 const GROQ_SYSTEM_PROMPT_MATH =
-  'You are an expert at creating math questions for Kazakhstan NIS ' +
-  '(Nazarbayev Intellectual Schools) and BIL school admission tests. ' +
-  'Generate questions that match the exact style, difficulty, and format ' +
-  'of real NIS/BIL entrance exams. Questions should test logical thinking, ' +
-  'not just memorization. ' +
-  'CRITICAL: You MUST respond with ONLY a valid JSON array. ' +
-  'No explanations, no markdown, no backticks, no extra text. ' +
-  'Start your response with [ and end with ]';
+  'You are an expert at creating math questions for Kazakhstan NIS and BIL entrance exams. ' +
+  'DIFFICULTY STANDARDS: Easy = 1-step calculation with one trap (e.g. percentage of a fraction). ' +
+  'Medium = 2-step reasoning combining two concepts (e.g. ratio then geometry). ' +
+  'Hard = 3+ steps, requires holding multiple rules simultaneously, non-obvious setup (e.g. reverse percentage in a word problem with ratios). ' +
+  'NEVER generate pure arithmetic like "what is 3 + 5". ALWAYS embed numbers in context. ' +
+  'Hard distractors must be the answer a student gets from the most common mistake for that question type. ' +
+  'Questions must require reasoning, not recall. ' +
+  'CRITICAL: Respond with ONLY a valid JSON array. No markdown, no backticks. Start with [ end with ]';
 
 const GROQ_SYSTEM_PROMPT_LOGIC =
-  'You are an expert at creating Logic and IQ questions for Kazakhstan ' +
-  'NIS (Nazarbayev Intellectual Schools) and BIL school admission tests. ' +
-  'Generate questions that test: pattern recognition (number sequences, shape patterns), ' +
-  'logical reasoning (if-then, true/false deductions), analogy questions (A is to B as C is to ?), ' +
-  'odd one out, matrix reasoning, and word logic puzzles. ' +
-  'These should match the exact style of real NIS/BIL entrance exam logic sections. ' +
-  'CRITICAL: You MUST respond with ONLY a valid JSON array. ' +
-  'No explanations, no markdown, no backticks, no extra text. ' +
-  'Start your response with [ and end with ]';
+  'You are an expert at creating Logic and IQ questions for Kazakhstan NIS and BIL entrance exams. ' +
+  'DIFFICULTY STANDARDS: Easy = single-rule pattern (every other number doubles). ' +
+  'Medium = two simultaneous rules (alternating +3 and ×2). ' +
+  'Hard = three rules or abstract matrix reasoning where surface pattern misleads. ' +
+  'For analogies: never use surface similarity (dog:cat) — use abstract relations (painter:canvas as composer:score). ' +
+  'For odd-one-out: ensure 3 distractors share a non-obvious property the correct answer lacks. ' +
+  'Distractors must be answers a student reaches by applying only part of the rule. ' +
+  'CRITICAL: Respond with ONLY a valid JSON array. No markdown, no backticks. Start with [ end with ]';
 
 const GROQ_SYSTEM_PROMPT_ENGLISH =
   'You are an expert at creating English language and literacy questions for Kazakhstan ' +
@@ -90,34 +89,33 @@ const GROQ_SYSTEM_PROMPT_ENGLISH =
   'Start your response with [ and end with ]';
 
 const GROQ_SYSTEM_PROMPT_PHYSICS =
-  'You are an expert at creating Physics questions for Kazakhstan ' +
-  'NIS (Nazarbayev Intellectual Schools) and BIL school admission tests. ' +
-  'Generate questions covering: mechanics (motion, forces, energy), thermodynamics, electricity, ' +
-  'magnetism, optics, waves, and basic modern physics. ' +
-  'Questions should match the exact style, difficulty, and format of real NIS/BIL entrance exams. ' +
-  'CRITICAL: You MUST respond with ONLY a valid JSON array. ' +
-  'No explanations, no markdown, no backticks, no extra text. ' +
-  'Start your response with [ and end with ]';
+  'You are an expert at creating Physics questions for Kazakhstan NIS and BIL entrance exams. ' +
+  'DIFFICULTY STANDARDS: Easy = direct formula application (F=ma, given 2 values find third). ' +
+  'Medium = 2-step: convert units then apply formula, or combine two laws. ' +
+  'Hard = multi-concept: e.g. use energy conservation then kinematics, or circuit with series+parallel combined. ' +
+  'NEVER ask "what is the SI unit of X" — that is recall, not physics. ' +
+  'Always embed in a scenario with numbers. Hard distractors = result of using wrong formula or forgetting unit conversion. ' +
+  'CRITICAL: Respond with ONLY a valid JSON array. No markdown, no backticks. Start with [ end with ]';
 
 const GROQ_SYSTEM_PROMPT_CHEMISTRY =
-  'You are an expert at creating Chemistry questions for Kazakhstan ' +
-  'NIS (Nazarbayev Intellectual Schools) and BIL school admission tests. ' +
-  'Generate questions covering: atomic structure, periodic table, chemical bonding, reactions, ' +
-  'stoichiometry, acids and bases, organic chemistry basics, and chemical equations. ' +
-  'Questions should match the exact style, difficulty, and format of real NIS/BIL entrance exams. ' +
-  'CRITICAL: You MUST respond with ONLY a valid JSON array. ' +
-  'No explanations, no markdown, no backticks, no extra text. ' +
-  'Start your response with [ and end with ]';
+  'You are an expert at creating Chemistry questions for Kazakhstan NIS and BIL entrance exams. ' +
+  'DIFFICULTY STANDARDS: Easy = identify product of a reaction type given reactants. ' +
+  'Medium = balance equation then find moles, or predict property from periodic trend. ' +
+  'Hard = stoichiometry with limiting reagent, or multi-step reaction pathway reasoning. ' +
+  'NEVER ask "what is the symbol of sodium" — that is memorization. ' +
+  'Always test mechanism or process: why does X happen, what is the product, what quantity results. ' +
+  'Distractors must be chemically plausible wrong products or common calculation errors. ' +
+  'CRITICAL: Respond with ONLY a valid JSON array. No markdown, no backticks. Start with [ end with ]';
 
 const GROQ_SYSTEM_PROMPT_BIOLOGY =
-  'You are an expert at creating Biology questions for Kazakhstan ' +
-  'NIS (Nazarbayev Intellectual Schools) and BIL school admission tests. ' +
-  'Generate questions covering: cell biology, genetics, evolution, ecology, human anatomy and physiology, ' +
-  'plants, animals, and microbiology. ' +
-  'Questions should match the exact style, difficulty, and format of real NIS/BIL entrance exams. ' +
-  'CRITICAL: You MUST respond with ONLY a valid JSON array. ' +
-  'No explanations, no markdown, no backticks, no extra text. ' +
-  'Start your response with [ and end with ]';
+  'You are an expert at creating Biology questions for Kazakhstan NIS and BIL entrance exams. ' +
+  'DIFFICULTY STANDARDS: Easy = process identification (which organelle does X). ' +
+  'Medium = apply a biological mechanism to a new scenario (predict outcome of a genetic cross). ' +
+  'Hard = multi-step reasoning across systems (how does X in the nervous system affect Y in the endocrine system), or interpret data from a described experiment. ' +
+  'NEVER ask "what is the basic unit of life" — that is memorization. ' +
+  'Test why and what happens next, not what is it called. ' +
+  'Distractors must represent plausible but incorrect biological outcomes. ' +
+  'CRITICAL: Respond with ONLY a valid JSON array. No markdown, no backticks. Start with [ end with ]';
 
 const GROQ_SYSTEM_PROMPT_GEOGRAPHY =
   'You are an expert at creating Geography questions for Kazakhstan ' +
@@ -131,15 +129,15 @@ const GROQ_SYSTEM_PROMPT_GEOGRAPHY =
   'Start your response with [ and end with ]';
 
 const GROQ_SYSTEM_PROMPT_HISTORY =
-  'You are an expert at creating History questions for Kazakhstan ' +
-  'NIS (Nazarbayev Intellectual Schools) and BIL school admission tests. ' +
-  'Generate questions covering: world history (major civilizations, events, figures), ' +
-  'Kazakhstan history (from ancient times to modern day), important dates, cultural developments, ' +
-  'and historical analysis. ' +
-  'Questions should match the exact style, difficulty, and format of real NIS/BIL entrance exams. ' +
-  'CRITICAL: You MUST respond with ONLY a valid JSON array. ' +
-  'No explanations, no markdown, no backticks, no extra text. ' +
-  'Start your response with [ and end with ]';
+  'You are an expert at creating History questions for Kazakhstan NIS and BIL entrance exams. ' +
+  'DIFFICULTY STANDARDS: Easy = cause of a specific well-known event. ' +
+  'Medium = compare two events or explain consequence of a policy/decision. ' +
+  'Hard = analyze multiple factors, distinguish between similar events across eras, or evaluate historical significance. ' +
+  'NEVER ask for a date or name in isolation — always frame as cause, consequence, comparison, or significance. ' +
+  'Example of banned question: "When was the Kazakh Khanate founded?" ' +
+  'Example of good question: "Which factor most directly contributed to the founding of the Kazakh Khanate in the 15th century?" ' +
+  'Distractors must be historically plausible alternative explanations. ' +
+  'CRITICAL: Respond with ONLY a valid JSON array. No markdown, no backticks. Start with [ end with ]';
 
 const GROQ_SYSTEM_PROMPT_INFORMATICS =
   'You are an expert at creating Informatics/Computer Science questions for Kazakhstan ' +
@@ -152,17 +150,15 @@ const GROQ_SYSTEM_PROMPT_INFORMATICS =
   'Start your response with [ and end with ]';
 
 const GROQ_SYSTEM_PROMPT_BIL_MATH_LOGIC =
-  'You are an expert at creating Mathematics and Logic questions specifically for the BIL ' +
-  '(Bilim-Innovation Lyceum / Білім-Инновация Лицейі) entrance exam in Kazakhstan. ' +
-  'The BIL exam contains 55 math and logic questions. Generate questions covering: ' +
-  'arithmetic (addition, subtraction, multiplication, division, fractions, percentages), ' +
-  'algebra (equations, inequalities, expressions), geometry (area, perimeter, angles, shapes), ' +
-  'number theory (prime numbers, divisibility, LCM, GCF), word problems, ' +
-  'logical sequences and patterns, spatial reasoning, and quantitative comparisons. ' +
-  'Questions must be appropriate for grades 4-6 students applying to BIL lyceums. ' +
-  'CRITICAL: You MUST respond with ONLY a valid JSON array. ' +
-  'No explanations, no markdown, no backticks, no extra text. ' +
-  'Start your response with [ and end with ]';
+  'You are an expert at creating Mathematics and Logic questions for the BIL entrance exam in Kazakhstan. ' +
+  'Target students: grades 4-6, highly competitive selection. ' +
+  'DIFFICULTY STANDARDS: Easy = 2-step word problem (rate × time, then subtract). ' +
+  'Medium = 3-step problem combining two math areas (fraction of a percentage, then geometry). ' +
+  'Hard = non-routine problem requiring insight: reverse engineering, working backwards, or finding a pattern in a word problem not solvable by direct formula. ' +
+  'Example hard question: "A cistern has 3 pipes. Pipe A fills it in 6h, B in 4h, C drains in 12h. How long to fill with all open?" ' +
+  'NEVER generate "what is 15% of 200" as a standalone question — always embed in a real scenario. ' +
+  'Distractors must be results of partial calculations or common grade 4-6 errors. ' +
+  'CRITICAL: Respond with ONLY a valid JSON array. No markdown, no backticks. Start with [ end with ]';
 
 const GROQ_SYSTEM_PROMPT_KAZAKH =
   'You are an expert at creating Kazakh language questions specifically for the BIL ' +
@@ -251,13 +247,13 @@ const GROQ_SYSTEM_PROMPT_UNT_HISTORY_KZ =
   'Start your response with [ and end with ]';
 
 const GROQ_SYSTEM_PROMPT_UNT_PROFILE_MATH =
-  'You are an expert creator of UNT (Unified National Testing, Kazakhstan) Profile Mathematics questions. ' +
-  'Generate realistic UNT-style multiple-choice questions for profile math: algebra, functions, ' +
-  'trigonometry, geometry, and probability/combinatorics. ' +
-  'Difficulty should match profile subject expectations in UNT. ' +
-  'CRITICAL: You MUST respond with ONLY a valid JSON array. ' +
-  'No explanations, no markdown, no backticks, no extra text. ' +
-  'Start your response with [ and end with ]';
+  'You are an expert creator of UNT Profile Mathematics questions for Kazakhstan high school graduates. ' +
+  'DIFFICULTY STANDARDS: Easy = direct formula (find area given dimensions). ' +
+  'Medium = algebraic manipulation + substitution, or trig identity application. ' +
+  'Hard = combined topic: e.g. solve system of equations where one is a trig function, or geometric probability, or function composition with domain restrictions. ' +
+  'All numeric answers must be verified correct. Non-round numbers are preferred for hard questions. ' +
+  'Distractors must be results of sign errors, wrong identities, or off-by-one combinatorics. ' +
+  'CRITICAL: Respond with ONLY a valid JSON array. No markdown, no backticks. Start with [ end with ]';
 
 const GROQ_SYSTEM_PROMPT_UNT_PROFILE_PHYSICS =
   'You are an expert creator of UNT (Unified National Testing, Kazakhstan) Profile Physics questions. ' +
@@ -1057,11 +1053,14 @@ function buildGroqUserPrompt(params: {
     `Target level: ${params.gradeLabel}. Difficulty: ${params.difficulty}. ` +
     `Topic: ${params.topic}. ` +
     `${blueprint.coverage} ` +
-    'Quality rules: each question must have one clearly correct answer and three plausible distractors. ' +
-    'Avoid ambiguous wording, trick phrasing, and culturally irrelevant context. ' +
-    'Use realistic exam phrasing and avoid duplicate question stems. ' +
-    'Where calculation is required, ensure numeric consistency and verify the provided correctAnswer matches one option exactly. ' +
-    'Before finalizing, self-check each item for exam alignment, factual correctness, and level appropriateness. ' +
+    'QUALITY RULES — read carefully: ' +
+'1. NEVER generate pure recall or definition questions. Every question must require reasoning, application, or multi-step calculation. ' +
+'2. Distractors must be wrong in a specific, non-obvious way: wrong formula applied, partial calculation result, common misconception, or off-by-one logic — not just random wrong numbers. ' +
+'3. All four options must seem viable to an unprepared student. If any option is obviously wrong, replace it. ' +
+'4. For difficulty=easy: 1-step reasoning with one trap. For difficulty=medium: 2-step reasoning or two concepts simultaneously. For difficulty=hard: 3+ steps, synthesis across subtopics, or a surface-level mislead. ' +
+'5. Hard questions: at least one distractor must be the answer reached by making the single most common mistake for that question type. ' +
+'6. Verify all calculations twice. correctAnswer must exactly match one of the four options as a string. ' +
+'7. Do not generate any question answerable by elimination. ' +
     `All text in the response including question, options, and explanation must be in ${languageLabel} only. ` +
     'No mixing of languages. Keep explanations concise and exam-oriented. ' +
     'Return ONLY a JSON array in this exact format:\n' +
@@ -1094,8 +1093,8 @@ async function createGroqCompletionWithRetry(
       const payload: any = {
         model: GROQ_MODEL,
         messages,
-        temperature: 0.5,
-        max_tokens: 2000,
+        temperature: 0.8,
+max_tokens: 3000,
       };
 
       if (useResponseFormat) {
@@ -1127,8 +1126,8 @@ async function createGroqCompletion(messages: Array<{ role: 'system' | 'user'; c
   const payload: any = {
     model: GROQ_MODEL,
     messages,
-    temperature: 0.5,
-    max_tokens: 2000,
+    temperature: 0.8,
+max_tokens: 3000,
   };
 
   if (useResponseFormat) {
@@ -1292,7 +1291,7 @@ interface QuestionQualityScore {
   subjectSpecific: number;
 }
 
-const QUALITY_THRESHOLD = 85;
+const QUALITY_THRESHOLD = 70;
 
 const SUBJECT_KEYWORDS: Record<QuestionSubject, string[]> = {
   math: ['algebra', 'equation', 'fraction', 'percent', 'ratio', 'geometry', 'number', 'calculate'],
@@ -1408,10 +1407,9 @@ function scoreQuestionQuality(
     if (!highComplexityMarkers.test(questionText)) difficultyFit += 10;
     if (simpleMarkers.test(questionText)) difficultyFit += 10;
   } else {
-    if (questionText.length >= 40) difficultyFit += 10;
-    if (/(analyze|evaluate|determine|compare|reason)/i.test(questionText)) difficultyFit += 10;
-    difficultyFit += 10;
-  }
+  if (questionText.length >= 50) difficultyFit += 15;
+  if (/(analyze|evaluate|determine|compare|reason|calculate|find|solve|which.*result|how many|what.*if)/i.test(questionText)) difficultyFit += 15;
+}
 
   const keywordMatches = SUBJECT_KEYWORDS[subject].filter((kw) => normalizedQuestion.includes(kw)).length;
   if (keywordMatches >= 1) subjectRelevance += 15;

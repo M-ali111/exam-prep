@@ -236,7 +236,13 @@ async function getNisBilQuestions(params: {
 }): Promise<NisBilQuestion[]> {
   return await generateNisBilQuestions({
     count: params.count,
-    gradeLabel: 'NIS/BIL entry level',
+    gradeLabel: params.subject.startsWith('unt_')
+      ? 'UNT exam level (Grade 11, competitive)'
+      : params.subject.startsWith('ielts_')
+      ? 'IELTS Academic Band 6-7 target'
+      : params.subject.startsWith('bil_') || params.subject === 'kazakh' || params.subject === 'history_kz'
+      ? 'BIL entrance exam level (Grades 4-6, highly competitive)'
+      : 'NIS entrance exam level (competitive selection)',
     difficulty: params.difficulty,
     topic: params.topic,
     language: params.language,
